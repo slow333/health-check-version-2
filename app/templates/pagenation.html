@@ -11,19 +11,24 @@
   {% endif %}
   {% set query_string = '&' ~ query_params|join('&') if query_params else '' %}
   {# 위에서의 query_string을 페이지 내용에 넣음 #}
-  <a href="/{{target_app}}/?page={{ 1 if page > 1 else '' }}{{ query_string }}">
-    First</a>
-  <a href="/{{target_app}}/?page={{ page - 1 if page > 1 else '' }}{{ query_string }}">
-    Pre</a>
+  <a href="/{{target_app}}/?page={{ 1 if page > 1 else '' }}{{ query_string }}" 
+    style="padding: 0;">
+    ⏮️</a>
+  <a href="/{{target_app}}/?page={{ page - 1 if page > 1 else '' }}{{ query_string }}"
+    style="padding: 0;">
+    ◀️</a>
   {% for i in range(start_page, end_page + 1) %}
     {% if i == page %}
       <strong style="color: red;">{{i}}</strong>
     {% else %}
-      <a class="page-link" href="/{{target_app}}/?page={{i}}{{ query_string }}">{{i}}</a>
+      <a class="page-link" href="/{{target_app}}/?page={{i}}{{ query_string }}"
+      style="padding: 0 6px;">{{i}}</a>
     {% endif %}
   {% endfor %}
-  <a href="/{{target_app}}/?page={{ page + 1 if page_length == per_page else '' }}{{ query_string }}">
-    Next</a>
-  <a href="/{{target_app}}/?page={{ total_pages if page < total_pages else '' }}{{ query_string }}">
-    Last</a>
+  <a href="/{{target_app}}/?page={{ page + 1 if page_length == per_page else '' }}{{ query_string }}"
+  style="padding: 0;">
+    ▶️</a>
+  <a href="/{{target_app}}/?page={{ total_pages if page < total_pages else '' }}{{ query_string }}"
+  style="padding: 0;">
+    ⏭️</a>
 </div>

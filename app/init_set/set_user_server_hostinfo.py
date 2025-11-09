@@ -50,6 +50,7 @@ def seed_data():
         op_woo.allowed_servers.append(s5)
         test.allowed_servers.extend([s1,s4, s5])
 
+        # hostinfos는 서버에서 자동으로 생성할 것임
         # h1 = HostInfos(hostname='server-r6', ip_address='192.168.219.206')
         # h2 = HostInfos(hostname='server-r7', ip_address='192.168.219.7')
         # h3 = HostInfos(hostname='server-r8', ip_address='192.168.219.111')
