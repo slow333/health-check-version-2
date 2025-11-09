@@ -38,9 +38,7 @@ def seed_data():
             Commands(category='sv_sysctl', name='vm.overcommit_memory', cmd='sysctl vm.overcommit_memory;'),
             Commands(category='sv_sysctl', name='vm.overcommit_ratio', cmd='sysctl vm.overcommit_ratio;'),
         ]
-        commands_sysstat = [
-            Commands(category='sv_sysstat', name='network_traffic', cmd='sar -n DEV;'),
-        ]
+            # Commands(category='sv_sysstat', name='network_traffic', cmd='sar -n DEV;'),
 
         db.session.add_all(commands)
         db.session.commit()

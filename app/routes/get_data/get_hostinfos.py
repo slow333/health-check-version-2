@@ -1,45 +1,47 @@
-from ...extensions import db
-from ...models.servers import Servers
-
-servers = db.session.query(Servers).all()
-
 cmd_host = [
     {'name': "echo hostname;", 'cmd': 'hostname;' },
     {'name': "echo ip_address;", 'cmd': 'hostname -I;' },
 ]
 
-def get_host_info():
+def get_hostinfos():
+    from ...extensions import db
+    from ...models.servers import Servers
     import paramiko # type: ignore
 
-    hostinfo_list = []
+    servers = db.session.query(Servers).all()
 
-    for server in servers:
-        try:
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy()) # For testing only
-            ssh_client.connect(server.ip_address, 22, server.login_id, server.password)
+    if len(servers) > 0:
+        hostinfo_list = []
 
-            cmd = ''
-            for item in cmd_host:
-                cmd += item['name']
-                cmd += item['cmd']
+        for server in servers:
+            try:
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy()) # For testing only
+                ssh_client.connect(server.ip_address, 22, server.login_id, server.password)
 
-            _, stdout, stderr = ssh_client.exec_command(cmd)
+                cmd = ''
+                for item in cmd_host:
+                    cmd += item['name']
+                    cmd += item['cmd']
 
-            full_output = stdout.read().decode()
-            output_lines = full_output.splitlines()
+                _, stdout, stderr = ssh_client.exec_command(cmd)
 
-            error_output = stderr.read().decode()
-            if error_output:
-                print(error_output)
+                full_output = stdout.read().decode()
+                output_lines = full_output.splitlines()
 
-            host_info = {}
-            for i, item in enumerate(output_lines):
-                if(i%2 == 0):
-                  host_info[item.strip()] = output_lines[i+1].strip()
-            hostinfo_list.append(host_info)
-        except Exception as e:
-            print(f"연결 실패: {e}")
-        finally:
-            ssh_client.close()
-    return hostinfo_list
+                error_output = stderr.read().decode()
+                if error_output:
+                    print(error_output)
+
+                host_info = {}
+                for i, item in enumerate(output_lines):
+                    if(i%2 == 0):
+                        host_info[item.strip()] = output_lines[i+1].strip()
+                hostinfo_list.append(host_info)
+            except Exception as e:
+                print(f"연결 실패: {e}")
+            finally:
+                ssh_client.close()
+        return hostinfo_list
+    else:
+        return None

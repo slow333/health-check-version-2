@@ -6,7 +6,7 @@ from ..extensions import db
 from ..models.users import Users
 from ..models.servers import Servers
 from ..models.hostinfos import HostInfos
-from .get_data.get_hostinfos import get_host_info
+from .get_data.get_hostinfos import get_hostinfos
 
 bp = Blueprint("hostinfos", __name__, url_prefix="/health/hostinfos")
 
@@ -28,7 +28,7 @@ def index():
 @bp.route("/generate")
 @login_required
 def generate_host():
-    hostinfos = get_host_info()
+    hostinfos = get_hostinfos()
     for info in hostinfos:
         query_existing = db.session.query(HostInfos)\
             .filter_by(ip_address=info.get("ip_address")).first()

@@ -142,9 +142,8 @@ def login_users():
             login_user(user)
             flash(f'안녕하세요 😊 {user.username} 님!')
             return redirect(url_for('auth.user_profile', id=user.id))
-        
         else:
-            flash(error)
+            flash(error, category='alert alert-danger')
             return render('auth/login.html')
 
 @bp.route('/logout')

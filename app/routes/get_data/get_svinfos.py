@@ -1,8 +1,3 @@
-from ...extensions import db
-from ...models.servers import Servers
-
-servers = db.session.query(Servers).all()
-
 cmd_sv_info = [
     {'name': "echo ip_address;", 'cmd': 'hostname -I;' },
     {'name': "echo os_info;", 'cmd': 'uname -a;' },
@@ -15,6 +10,10 @@ cmd_sv_info = [
 
 def get_svinfos():
     import paramiko # type: ignore
+    from ...extensions import db
+    from ...models.servers import Servers
+
+    servers = db.session.query(Servers).all()
 
     svinfos_list = []
 
