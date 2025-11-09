@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Image Upload{% endblock %}
+
+{% block header %}Image Upload to PostgreSQL{% endblock %}
+
+{% block content %}
+<section>
+  <h3>Upload New Image</h3>
+  <form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <input type="text" name="title" placeholder="title">
+      <label for="pic">Select image</label>
+      <input type="file" name="pic" class="form-control-file" id="pic" accept="image/png, image/jpeg, image/gif, image/webp">
+    </div>
+    <button type="submit" class="btn btn-primary mt-3 ms-2">Upload</button>
+  </form>
+</section>
+
+<section class="mt-2">
+  <h2>Uploaded Images</h2>
+  <div class="row">
+    {% for image in images %}
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-title text-center fs-lg">{{ image.title }}</div>
+        <img src="{{ url_for('images.get_image', id=image.id) }}" class="card-img-top" alt="{{ image.name }}">
+        <div class="card-body" style="margin:0; padding:0;">
+          <p class="card-text text-center fs-sm">{{ image.name }}</p>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <p>No images uploaded yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

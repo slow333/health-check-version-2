@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Images {% endblock %}
+
+{% block header %} Image Uploaded
+    <span class="d-flex justify-content-end" style="margin-top:-30px">
+        <a class="btn btn-outline-danger fs-sm" href="/images/upload">
+            Upload Image  </a>
+    </span>
+{% endblock %}
+
+{% block content %}
+<section class="mt-2">
+  <div class="row">
+    {% for image in images %}
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-title text-center fs-lg">{{ image.title }}</div>
+        <img src="{{ url_for('images.get_image', id=image.id) }}" class="card-img-top" alt="{{ image.name }}">
+        <div class="card-body" style="margin:0; padding:0;">
+          <p class="card-text text-center fs-sm">{{ image.name }}</p>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <p>No images uploaded yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

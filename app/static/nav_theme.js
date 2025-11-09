@@ -39,6 +39,9 @@ async function setSubMenus(item){
     case 'health':
       await loadByFile('/static/nav-html/_health-nav.html');
       break;
+    case 'images':
+      await loadByFile('/static/nav-html/_images-nav.html');
+      break;
     default:
       await loadByFile('/static/nav-html/_null-nav.html');
       break;

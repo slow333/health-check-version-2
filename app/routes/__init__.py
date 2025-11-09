@@ -1,6 +1,6 @@
 from . import (
   commands_routes, contents_routes, auth, hostinfos_routes, servers_routes, 
-  sar_traffic_routes, svinfos_routes)
+  sar_traffic_routes, svinfos_routes, image_routes)
 
 def init_app(app):
   app.register_blueprint(auth.bp)
@@ -9,5 +9,6 @@ def init_app(app):
   app.register_blueprint(commands_routes.bp)
   app.register_blueprint(sar_traffic_routes.bp)
   app.register_blueprint(svinfos_routes.bp)
+  app.register_blueprint(image_routes.bp)
 
   app.register_blueprint(contents_routes.bp)

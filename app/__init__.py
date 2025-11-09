@@ -28,10 +28,6 @@ def create_app(config_class=Config):
         from . import routes 
         routes.init_app(app)
 
-        # from . import server_info
-        # server_info.init_app(app)
-
-
         # 데이터베이스 테이블 생성
         db.create_all()
 
