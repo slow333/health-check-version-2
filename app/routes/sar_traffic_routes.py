@@ -9,10 +9,11 @@ from ..models.hostinfos import HostInfos
 from ..models.sar_traffic import SarTraffic
 from .pagenation import pagenation
 from .get_data.get_sar_traffic import get_sar_traffic
-import os
+from .get_data.graph_sar_traffic import get_traffic_data, plot_traffic_over_time
 import re
 from sqlalchemy import or_, and_, cast, String # type: ignore
 from datetime import datetime
+import os
 # hostname,IP,Interface,Date Time,rxkB/s,txkB/s
 
 bp = Blueprint("sar_traffic", __name__, url_prefix="/health/sar_traffic")
@@ -113,3 +114,44 @@ def index():
                   start_date=start_date,
                   end_date=end_date
                   )
+
+@bp.route("/graph")
+def graph():
+    hostname = request.args.get('hostname', '')
+    ip_address = request.args.get('ip_address', '')
+    start_date = request.args.get('start_date', '')
+    end_date = request.args.get('end_date', '')
+
+    if not hostname:
+        hostname = "rhel7"
+
+    query = db.session.query(SarTraffic)
+    # ========== Search Logic ==========
+    filters = []
+    if hostname:
+        search_hostname = db.session.query(HostInfos).filter_by(hostname=hostname).first()
+        if not search_hostname:
+            flash("정확히 일치하는 호스트명이 없습니다.", category="warning")
+            return render("health/sar_traffic/graph.html", hostname=hostname, start_date=start_date, end_date=end_date, now=datetime.utcnow)     
+        filters.append(SarTraffic.hostname == hostname)
+    if ip_address:
+        filters.append(cast(SarTraffic.ip_address, String).ilike(f'%{ip_address}%'))
+    if start_date:
+        filters.append(SarTraffic.date_time >= start_date)
+    if end_date:
+        filters.append(SarTraffic.date_time <= f'{end_date} 23:59:59')
+
+    query = query.filter(and_(*filters)).order_by(SarTraffic.date_time)
+
+    df = get_traffic_data(query)
+    
+    # app/static/img/sar_traffic_graph.png
+    from flask import current_app
+    img_folder = os.path.join(current_app.static_folder, 'img')
+    os.makedirs(img_folder, exist_ok=True)
+    output_path = os.path.join(img_folder, 'sar_traffic_graph.png')
+
+    hostinfo = db.session.query(HostInfos).filter_by(hostname=hostname).first()
+    plot_traffic_over_time(df, output_path, hostname=hostname, ip_address=hostinfo.ip_address)
+
+    return render("health/sar_traffic/graph.html", hostname=hostname, start_date=start_date, end_date=end_date, now=datetime.utcnow)

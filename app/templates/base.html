@@ -24,6 +24,8 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
+<!-- Primary 파란색 계열, Secondary 회색 계열, Success 초록색 계열, Danger	빨간색 계열, 
+Warning 노란색 계열, Info 하늘색 계열, Light 밝은 회색/흰색, Dark -->
         <div class="alert alert-{{ category }} alert-dismissible fade show m-3" role="alert">
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

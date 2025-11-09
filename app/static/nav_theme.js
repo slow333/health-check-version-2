@@ -8,7 +8,8 @@ async function selectNavItems() {
       if (currLocation == item.getAttribute('href') ){
         item.classList.add('curr-url');
         if(currLocation.split('/')[3]?.length > 0){
-          const parentNode =item.parentElement?.parentElement?.parentElement?.firstElementChild;
+          const parentNode =item.parentElement?.firstElementChild;
+          // const parentNode =item.parentElement?.parentElement?.parentElement?.firstElementChild;
           parentNode.classList.add('curr-url');
         }
       }

@@ -1,13 +1,9 @@
 # pip install pandas matplotlib
 
 # app.py
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost/dbname'
-db = SQLAlchemy(app)
-
+import pandas as pd
+import matplotlib.pyplot as plt
+from ..extensions import db
 
 class Sales(db.Model):
     __tablename__ = 'sales'
@@ -16,8 +12,6 @@ class Sales(db.Model):
     product_a = db.Column(db.Integer)
     product_b = db.Column(db.Integer)
     product_c = db.Column(db.Integer)
-
-import pandas as pd
 
 def get_sales_data():
     # SQLAlchemy ORM → Pandas DataFrame
@@ -30,7 +24,6 @@ def get_sales_data():
     } for row in query]
     return pd.DataFrame(data)    
 
-import matplotlib.pyplot as plt
 
 def plot_sales(df):
     plt.figure(figsize=(10, 6))
