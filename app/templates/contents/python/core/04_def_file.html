@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %} Python {% endblock %}
+{% block header %} def: 함수 {% endblock %}
+  
+{% block content %}
+<section>
+  <h3>함수 사용 방법</h3>
+<pre>def add_many(*args):
+  result = 0
+  for arg in args:
+    result += arg
+  return result
+
+add_many(1,2,3,4,5,6,7)
+
+def add_mul(choice, *args):
+  if choice == "add":
+    result = 0
+    for arg in args:
+      result += arg
+  elif choice == "mul":
+    result = 1
+    for arg in args:
+      result *= arg
+  return result
+
+add_mul("add", 1,2,3,4,5)
+add_mul("mul", 1,2,3,4,5)
+</pre>
+<h4>*args</h4>
+<p>나머지 매게변수로 동작함</p>
+<h4>**kwargs</h4>
+<h5>입력값을 dictionary 형태로 처리</h5>
+<h5>return a, b 하면 2개의 값을 tuple로 반환함</h5>
+<pre>def print_kwargs(**kwargs):
+  print(kwargs)
+
+print_kwargs(a=1, b=2, c=3, d=4) 
+
+def add_and_mul(a,b):
+  return a+b, a*b
+
+add_and_mul(3,4)
+result1, result2 = add_and_mul(3,4)
+print(result1, result2)</pre>
+<h4>전역변수 사용하기(local에서 global 사용)</h4>
+<pre>a = 1
+def vartest():
+  global a
+  a = a + 1
+
+vartest()
+print(a)</pre>
+<h3>사용자 입력 받기 input</h3>
+<p>int(input(‘숫자를 입력하세요’)) # 창에서 입력값을 받음<br />
+input으로 받음 값은 str으로 저장됨</p>
+</section>
+
+<h3>파일 읽고 쓰기</h3>
+<section>
+<p>score_file = open(“score.txt”, “w”, encoding=“utf8”)<br />
+print(“수학 : 0”, file=score_file)<br />
+print(“영어 : 50”, file=score_file)<br />
+score_file.close()</p>
+<h4>파일을 쓰기 모드로 열기</h4>
+<p>f = open(‘external.txt’, ‘w’) # 파일을 쓰기 모드로 열기<br />
+f.write(‘Hello, World!’)<br />
+f.close()</p>
+<pre>f = open(&quot;새파일.txt&quot;, "w")
+for i in range(1, 11):
+    data = &quot;%d번째 줄입니다.\n&quot; % i
+    f.write(data)
+f.close()</pre>
+<h4>파일을 읽기 모드로 열기</h4>
+<pre>f = open("external.txt", "r")
+content = f.read()
+print(content)
+f.close()</pre>
+<h4>a 파일을 추가 모드로 열기</h4>
+<pre>text = "add by a mode"  
+f = open("external.txt", "a")  
+f.write("\n"+ text)  
+f.close()  </pre>
+<h4>readline() 함수 사용하기</h4>
+<pre>f = open(&quot;새파일.txt&quot;, "r")  
+print(f.readline())  
+print(f.readline())  
+print(f.readline())  
+print(f.readline())  
+  
+f.close()  
+
+while True:  
+    line = f.readline()  
+    if not line: break  
+    print(line)  
+f.close()  </pre>
+<h4>readlines() 함수 사용하기</h4>
+<p>한글 깨지 방지를 위해 쓰기에 encoding=‘utf-8’ 필요<br />
+읽을 때도 encoding=‘utf-8’ 필요</p>
+<pre>f = open(&quot;새파일.txt&quot;, "w", encoding="utf-8")
+for i in range(1, 6):
+    data = &quot;%d번째 줄입니다.\n&quot; % i
+    f.write(data)
+f.close()
+
+f = open(&quot;새파일.txt&quot;, "r", encoding="utf-8")
+lines = f.readlines()
+print(lines[len(lines) - 1])  # Print the last line
+for line in lines:
+    print(line)
+f.close()
+</pre>
+<h4>with문과 함께 사용하기(close()를 안해도 됨)</h4>
+<pre>with open("external.txt", "w") as f:
+  f.write("Hello, World!")
+with open("external.txt", "r") as f:
+  content = f.read()
+  print(content)  </pre>
+<h4>sys 모듈로 매개변수 주기</h4>
+<pre>#sys1.py
+import sys
+args = sys.argv[1:]
+for arg in args:
+  print(arg)</pre>
+<h3>pickle 변수를 파일로 저장하기</h3>
+<pre>import pickle
+f = open("external.txt", "wb")
+data = {1: "python", 2: "you need", "취미": ["축구", "골프", "코딩"]}
+pickle.dump(data, f)
+f.close()
+
+f = open("external.txt", "rb")
+data = pickle.load(f)
+print(data)
+f.close()</pre>
+</section>
+{% endblock %}

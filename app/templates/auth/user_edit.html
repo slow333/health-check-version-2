@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %} MY Topic app {% endblock %}
+{% block header %}
+ Users List
+{% endblock %}
+  
+{% block content %}
+  <form method="post" enctype="multipart/form-data" class="form-group d-flex flex-column gap-2 align-items-center" style="max-width: 600px; margin: auto;">
+    <label for="username">username</label>
+    <input type="text" name="username" id="username" value="{{ profile['username'] }}" required>
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" value="{{ profile['email'] }}" required >
+    ProfileImages <input type="file" name="profile_image" id="profile_image" >
+
+    <input class="btn btn-primary" type="submit" value="Update User Profile" >
+    <a class="btn btn-secondary w-100" href="/auth/{{ profile['id'] }}/">cancel</a>
+  </form>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %} Flask {% endblock %}
+{% block header %} Core CRUD {% endblock %}
+  
+{% block content %}
+<section>
+  <h4>sqlalchemy 1.3.2 기준, 1.4부터는 많이 다름</h4>
+  <h3>INSERT(create)</h3>
+  <pre>from sqlalchemy import insert
+from db_config import engine, users, addresses
+
+ins = users.insert().values([
+  {'name': 'Jane', 'fullname': 'Jane Doe'},
+  {'name': 'Alice', 'fullname': 'Alice Smith'},
+  {'name': 'Bob', 'fullname': 'Bob Johnson'}
+])
+
+ins_add = addresses.insert().values([
+  {'user_id': 1, 'email_address': 'john.doe@example.com'},
+  {'user_id': 2, 'email_address': 'alice.smith@example.com'},
+])
+with engine.connect() as conn:
+  conn.execute(ins)
+  conn.execute(ins_add) </pre>
+</section>
+<section>
+  <h3>SELECT(read)</h3>
+  <pre>from sqlalchemy import select
+from db_config import engine, users, addresses
+
+select_all = select([users])
+users_select = select([users]).where(users.c.name == 'Jane')
+with engine.connect() as conn:
+  for row in conn.execute(select_all): print(row)
+  for row in conn.execute(users_select): print(row)
+</pre>
+</section>
+<section>
+  <h3>UPDATE(update)</h3>
+  <pre>from sqlalchemy import update
+from db_config import engine, users
+
+stmt = users.update().where(users.c.name == 'Jane').values(fullname='Jane Doe Updated')
+with engine.connect() as conn:
+  conn.execute(stmt)
+  </pre>
+</section>
+<section>
+  <h3>DELETE(delete)</h3>
+  <pre>from sqlalchemy import delete
+from db_config import engine, users
+
+stmt = users.delete().where(users.c.name == 'Jane')
+with engine.connect() as conn:
+  conn.execute(stmt)
+  </pre>
+</section>
+<section>
+  <h3>JOIN(read)</h3>
+  <pre>from sqlalchemy import select, join
+from db_config import engine, users, addresses
+import sqlalchemy
+
+print(sqlalchemy.__version__)
+j = join(users, addresses, users.c.id == addresses.c.user_id)
+inner_join = select([users.c.name, addresses.c.email_address]).select_from(j)
+print(str(inner_join))
+
+oj = join(users, addresses, users.c.id == addresses.c.user_id, isouter=True)
+left_outer_join = (
+  select([users, addresses])
+  .select_from(oj)
+  )
+print(str(left_outer_join))
+
+with engine.connect() as conn:
+  result = conn.execute(inner_join)
+  for row in result:
+    print(row)
+  for row in conn.execute(left_outer_join):
+    print(row)
+</pre>
+</section>
+{% endblock %}

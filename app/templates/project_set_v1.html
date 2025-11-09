@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+{% block title %} Project setting {% endblock %}
+{% block header %} Project setting {% endblock %}
+
+{% block content %}
+<section>
+<pre>
+/project-v2
+  /app
+    /routes
+    /static
+    /templates
+    __init__.py
+    admin.py
+    models.py
+    routes.py
+    extensions.py # app과 blueprint간 순환참조 문제 해결에 필요
+run.py
+# 환경변수 설정(마치 시스템에 설정한 것과 같은 효과를 가짐)
+.env 
+# from dotenv import load_dotenv load_dotenv()해서 사용
+config.py
+.gitignore
+requirements.txt
+</pre>
+</section>
+
+<section>
+<h3>python 3.13.9 버젼 기준</h3>
+<pre>
+blinker==1.9.0
+click==8.3.0
+colorama==0.4.6
+Flask==3.1.2
+Flask-Admin==1.6.1
+Flask-Login==0.6.3
+Flask-Mail==0.10.0
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.2
+greenlet==3.2.4
+itsdangerous==2.2.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+pillow==11.3.0
+psycopg2-binary==2.9.10
+python-dotenv==1.1.1
+typing_extensions==4.15.0
+Werkzeug==3.1.3
+WTForms==3.1.2
+</pre>
+<h2>flask-admin error</h2>
+<p>flask-admin user crud error "error AttributeError: 'tuple' object has no attribute 'items'" ==> <strong>flask-wtf 버젼을 3.1.2로 해야 애러 안남</strong></p>
+<h4>WTForms versions 3.1.0 and newer introduced changes that are not compatible with Flask-Admin 1.6.1, leading to this crash when Flask-Admin tries to render a create or edit view</h4>
+</section>
+
+<section>
+  <h3>app/__init__.py</h3>
+  <p>__init__로 하면 자신이 속한 폴더(app)에 직접 적용됨</p>
+  <p>blueprint와 순환 참조를 해결하기 위해 extensions.py에 설정 분리 </p>
+<pre>
+from flask import Flask
+from config import Config
+from .extensions import db, mail, login_manager
+
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    
+    # 설정 클래스로부터 설정을 로드
+    app.config.from_object(config_class)
+
+    # SQLAlchemy 객체를 앱과 연결
+    db.init_app(app)
+    mail.init_app(app)
+    login_manager.init_app(app)
+
+    # Admin 패널 초기화 및 화면 등록
+    from .admin import init_admin
+    init_admin(app, db)
+
+    # 블루프린트나 다른 라우트를 여기서 등록
+    with app.app_context():
+        from .models import Users
+        @login_manager.user_loader
+        def load_user(user_id):
+            return Users.query.get(int(user_id))
+        
+        # 모든 blueprints를 등록(app/routes/__init__.py)
+        from . import routes 
+        routes.init_app(app)
+
+        # 데이터베이스 테이블 생성
+        db.create_all()
+
+    return app
+</pre>
+<h4>run app : python run.py</h4>
+</section>
+<h3>extensions.py</h3>
+<pre>
+from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
+from flask_login import LoginManager
+
+# SQLAlchemy, Mail, and LoginManager instances
+db = SQLAlchemy()
+mail = Mail()
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login_users'
+login_manager.login_message_category = 'info'
+</pre>
+<h3>app/routes/__init__.py</h3>
+<pre>
+from . import contents_routes, auth, blog
+
+def init_app(app):
+  app.register_blueprint(auth.bp)
+  app.register_blueprint(blog.bp)
+
+  app.register_blueprint(contents_routes.bp)
+
+</pre>
+<h3>admin.py</h3>
+<pre>
+from flask import redirect, url_for, flash, Blueprint
+from flask_admin import Admin, AdminIndexView
+from flask_login import current_user
+from flask_admin.contrib.sqla import ModelView
+from wtforms import PasswordField
+
+# Custom Admin Index View to secure the main admin page
+class SecureAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+         return current_user.is_authenticated and current_user.is_admin
+
+    def inaccessible_callback(self, name, **kwargs):
+        flash('You do not have permission to access the admin panel.', 'danger')
+        return redirect(url_for('auth.login_users'))
+
+class SecureModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+    def inaccessible_callback(self, name, **kwargs):
+        flash('You do not have permission to access this resource.', 'danger')
+        return redirect(url_for('auth.login_users'))
+
+class UserView(SecureModelView):
+    # 이 메서드가 빠지면 `TypeError` 발생 가능성이 높아집니다.
+    def __init__(self, model, session, **kwargs):
+        super().__init__(model, session, **kwargs)
+    # form_extra_fields = {
+    #   'password': PasswordField('Password')
+    # }  
+    # set password-hash
+    def on_model_change(self, form, model, is_created):
+        if form.password.data:
+            model.set_password(form.password.data)
+        elif not is_created:
+            del form.password
+
+class BlogView(SecureModelView):
+    form_ajax_refs = {
+        'author': {
+        'fields': ['username', 'email'], # Fields to search against in the User model
+        'placeholder': 'Please select a user',
+        'page_size': 10,
+        'minimum_input_length': 1, # Start searching after typing at least 1 character
+        }
+    }
+
+class ServerView(SecureModelView):
+    # Use AJAX for the 'users' relationship
+    # This will render a search box instead of a dropdown
+    form_ajax_refs = {
+        'owner': {
+        'fields': ['username', 'email'], 
+        'placeholder': 'Please select a user',
+        'page_size': 10,
+        'minimum_input_length': 1, 
+        }
+    }
+
+def init_admin(app, db):
+    admin = Admin(app,
+        name='Admin Panel', template_mode='bootstrap4',
+        index_view=SecureAdminIndexView(name='Dashboard', url='/admin')
+    )
+
+    # Add all specified models to the admin interface
+    from .models import Users, Blog, Server
+    admin.add_view(UserView(Users, db.session, category='Models'))
+    admin.add_view(BlogView(Blog, db.session, category='Models'))
+    admin.add_view(ServerView(Server, db.session, category='Models'))
+</pre>
+<h3>run.py</h3>
+<p>이렇게 별도 구성해야 app에 있는 것을 import 할 수 있음</p>
+<pre>
+from app import create_app
+
+app = create_app()
+
+if __name__ == '__main__':
+  app.run(debug=True)
+</pre>
+<h3>config.py</h3>
+<p>환경 설정 변수를 저장함 : os 환경설정을 대신해서 수행 가능</p>
+<p>관련 변수를 .evn에 설정하고 dotenv를 사용(.gitignore에 추가)</p>
+<pre>
+import os
+from dotenv import load_dotenv
+
+# .env 파일에서 환경 변수를 로드합니다.
+load_dotenv()
+
+class Config:
+  """애플리케이션 환경 설정"""
+  # Flask 앱의 보안을 위한 시크릿 키
+  SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+
+  # 데이터베이스 설정
+  SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+  JSON_AS_ASCII = False  # 한글 깨짐 방지
+  MAIL_SERVER = 'smtp.gmail.com'
+  MAIL_PORT = 587
+  MAIL_USE_TLS = True
+  MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+  MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+
+  FLASK_ADMIN_SWATCH = 'cerulean'
+</pre>
+<h3>.evn</h3>
+<p>OS에 환경변수로 등록하는 것과 같은 효과를 줌</p>
+<pre>
+# PostgreSQL 데이터베이스 연결 URI
+# 형식: postgresql://사용자이름:비밀번호@호스트:포트/데이터베이스이름
+DATABASE_URL="postgresql+psycopg2://postgres:1111@localhost:5432/sv_check_v1"
+
+# SECRET_KEY="secret key"
+
+MAIL_USERNAME = 'my gmail'
+MAIL_PASSWORD ='KEY...'
+</pre>
+  <h4>gmail smtp 사용을 위해서는 myaccount.google.com/apppassowrds 에서 별도로 app 암호를 설정해야함 </h4>
+<h4>OS에서 환경 설정 : 변수설정은 .env로 대체 가능</h4>
+<pre>
+set env run script
+$ cat ~/.bashrc
+alias start="source /b/python/flask-tutorial/.venv/Scripts/activate"
+alias run="flask --app flaskr run --debug"
+DATABASE_URL="postgresql://postgres:1111@localhost/mydb"
+#             db type        id     pass    주소    db이름
+
+# ==== window에서는 ====
+고급시스템설정 > 환경변수 > 사용자변수 > 새로만들기
+변수이름 : PASSWORD, 변수값: 1111
+
+# flask_crud 
+### To run the app, 
+### bash: export FLASK_APP=pybo, export FLASK_DEBUG=true , flask run
+### cmd : set FLASK_APP=pybo, set FLASK_DEBUG=true, flask run  
+</pre>
+<h3>models.py</h3>
+<pre>
+from .extensions import db
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+# <b>공통으로 사용할 모델</b>
+class BaseModel(db.Model):
+  __abstract__ = True # 자체에서 테이블을 생성하지 않음
+  __allow_unmapped__ = True # 내부에서 db와 상관없는 py객체 생성가능
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+# <b>UserMixin을 해야 login 상태를 flask_login에서 관리할 수 있음</b>
+class BaseModel(db.Model):
+    __abstract__ = True
+    __allow_unmapped__ = True
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+class Users(UserMixin, BaseModel):
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password_hash  = db.Column(db.Text(), nullable=False)
+    profile_image = db.Column(db.String(80), nullable=True, default='default.jpg')
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+
+    def set_password(self, password):
+        self.password_hash  = generate_password_hash(password)
+        
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return f'[Users {self.username}]'
+
+class Server(BaseModel):
+    name = db.Column(db.String(255), nullable=False)
+    servers = db.Column(db.ARRAY(db.Text), nullable=False)
+    created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    owner = db.relationship('Users', backref=db.backref('servers', lazy=True))
+
+    def __repr__(self):
+        return f'[Server {self.name} for {self.owner.username}]'
+  
+class Blog(BaseModel):
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text(), nullable=False)
+    comment = db.Column(db.Text(), nullable=True)
+    created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship('Users', backref=db.backref('blogs', lazy=True))
+
+    def __repr__(self):
+        return f' [ Blog {self.title} for {self.author.username}]'
+</pre>
+</section>
+<section>
+  <h2>SqlAlchemy ORM</h2>
+  <pre>
+# Select
+blog = Blog.query.get(1)
+blog = Blog.query.filter_by(id=1).first()
+
+blogs = Blog.query.all()
+blogs = db.session.qury(Blog).all()
+
+blog = db.session.qury(Blog).filter(Blog.author_id=1).first()
+
+# Create
+blog = Blog(title=title, content=content, author_id=current_user.id)
+db.session.add(blog)
+db.session.commit()
+
+# Update
+blog = Blog.query.get(1)
+blog.title = title
+blog.content = content
+db.session.commit()
+
+# Delete
+db.session.delete(blog)
+db.session.commit()
+
+# Join (using relationship)
+# SQLAlchemy automatically knows how to join based on the relationship defined in the model.
+# This returns a list of Blog objects where the author's username is 'john'.
+blogs_by_john = db.session.query(Blog).join(Blog.author).filter(User.username == 'john').all()
+
+# Join (explicit condition)
+# You can also specify the join condition explicitly.
+# This returns tuples of (Blog, User) objects.
+blogs_with_authors = db.session.query(Blog, User).join(User, Blog.author_id == User.id).all()
+for blog, author in blogs_with_authors:
+    print(f"Blog: {blog.title}, Author: {author.username}")
+
+# limit, order_by 
+profile_page = (
+  db.session.query(Profile)
+    .order_by(Profile.id.desc())
+    .limit(per_page)
+    .offset(offset)
+    .all()
+)
+# count
+count = db.session.query(Profile).count()
+
+# group_by example
+# To count the number of blogs each user has written.
+# We need to import `func` from sqlalchemy for aggregate functions like count().
+from sqlalchemy import func
+
+user_blog_counts = db.session.query(
+    User.username,
+    func.count(Blog.id).label('blog_count')
+  ).join(Blog, User.id == Blog.author_id).group_by(User.username).all()
+
+# The result will be a list of tuples, e.g., [('john', 5), ('jane', 3)]
+for username, count in user_blog_counts:
+    print(f"User: {username} has {count} blogs.")
+  </pre>
+</section>
+
+{% endblock %}

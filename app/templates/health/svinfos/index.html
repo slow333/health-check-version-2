@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %} Server Health Check {% endblock %}
+{% block header %} Server Info List
+    {% if current_user.is_authenticated %}
+      <span class="d-flex justify-content-end" style="margin-top:-30px">
+        <a class="btn btn-outline-danger fs-sm" href="/health/svinfos/generate">Generate Server Info</a>
+      </span>
+    {% endif %}
+   {% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-column">
+    <table class="table table-striped mt-3 fs-sm">
+      <thead class="thead-dark">
+          <tr>
+            <th>hostname</th>
+            <th>IP</th>
+            <th>os_info</th>
+            <th>total_memory</th>
+            <th>cpu_info</th>
+            <th>cpu_cores</th>
+            <th>uptime</th>
+            <th>checked_date</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for svinfo in svinfos %}
+          <tr>
+            <td>{{ svinfo.os_info.split()[1] }}</td>
+            <td>{{ svinfo.ip_address }}</td>
+            <td>{{ svinfo.os_info.split()[2] }}</td>
+            <td>{{ svinfo['total_memory'] }}</td>
+            <td>{{ svinfo['cpu_info'] }}</td>
+            <td>{{ svinfo['cpu_cores'] }}</td>
+            <td>{{ svinfo.uptime | replace(',', '') }}</td>
+            <td>{{ svinfo.checked_date}}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+      </table>
+  </div>
+{% endblock %}

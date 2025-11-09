@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit Server {% endblock %}
+{% block header %} Edit Server: {{ server.server_name }} {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <form method="POST" action="{{ url_for('servers_infos.edit_server', id=server.id) }}">
+    <div class="form-group">
+        <label for="server_name">Server Name</label>
+        <input type="text" class="form-control" id="server_name" 
+            name="server_name" value="{{ server.server_name }}" required>
+    </div>
+    <div class="form-group">
+        <label for="login_id">Login ID</label>
+        <input type="text" class="form-control" id="login_id" 
+            name="login_id" value="{{ server.login_id }}">
+    </div>
+    <div class="form-group">
+        <label for="ip_address">Server IP</label>
+        <input type="text" class="form-control" id="ip_address" 
+            name="ip_address" value="{{ server.ip_address }}" required>
+    </div>
+    <div class="form-group">
+        <label for="password">New Password</label>
+        <input type="password" class="form-control" id="password" 
+            name="password" placeholder="Leave blank to keep current password">
+    </div>
+    <div>
+      <label>Current Operators:</label>
+      <ul>
+        {% for operator in server.operators %}
+            <li>{{ operator.username }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+      <div class="form-group">
+        <label for="operators">SELECT OPERATORS</label>
+        <select multiple class="form-control" id="operators" name="operators" autofocus >
+          {% for user in users %}
+              {% if user in server.operators %}
+                  <option value="{{ user.id }}" selected>{{ user.username }}</option>
+              {% else %}
+                  <option value="{{ user.id }}">{{ user.username }}</option>
+              {% endif %}
+          {% endfor %}
+        </select>
+        <small class="form-text text-muted">Ctrl을 누르고 여러개 선택하세요.</small>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Update Server</button>
+    </form>
+</div>
+{% endblock %}

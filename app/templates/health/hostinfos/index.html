@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %} Server Health Check {% endblock %}
+{% block header %} Host Info List
+    {% if current_user.is_authenticated %}
+      <span class="d-flex justify-content-end" style="margin-top:-30px">
+        <a class="btn btn-outline-danger fs-sm" href="/health/hostinfos/generate">Generate Host Info</a>
+      </span>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-column">
+    <table class="table table-striped mt-3 fs-sm">
+      <thead class="thead-dark">
+            <tr>
+              <th>Hostname</th>
+              <th>IP Address</th>
+              <th>Access Info</th>
+              <th>Created</th>
+              <th>Operators</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% if current_user.is_admin %}
+            {% for hostinfo in hostinfos %}
+              <tr>
+                {% include 'health/hostinfos/template_hostinfos_list.html' %}
+              </tr>
+              {% endfor %}
+          {% else %}
+            {% for hostinfo in hostinfo_server_by_user %}
+              <tr>
+                {% include 'health/hostinfos/template_hostinfos_list.html' %}
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+  </div>
+{% endblock %}

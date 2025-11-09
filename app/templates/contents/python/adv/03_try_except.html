@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %} Python Advanced {% endblock %}
+{% block header %} try, except, finally {% endblock %}
+  
+{% block content %}
+<section>
+<pre>def say_nick(nick):
+    if nick == &#39;바보&#39;:
+        raise MyError()
+    print(nick)
+
+class MyError(Exception):
+  def __str__(self):
+    return &#39;허용되지 않는 별명입니다.&#39;
+
+try:
+    say_nick(&#39;천사&#39;)
+    say_nick(&#39;바보&#39;)
+except MyError as e:
+    print(e)</pre>
+<h2>else, finally</h2>
+<pre>file = None
+try:
+    file = open(&quot;my_file.txt&quot;, &quot;r&quot;)
+    # ... do something with the file
+except FileNotFoundError:
+    print(&quot;File not found.&quot;)
+else:
+    print(&quot;File was successfully opened and processed.&quot;)
+finally:
+    if file:
+        file.close() # Always close the file</pre>
+<h3>모든
+예외를 처리하려면 except: 처럼 애러 타입을 지정하지 않으면됨</h3>
+<h2>애러 종류</h2>
+<pre>try:
+    # Code that might raise any error
+    result = int(&quot;abc&quot;)
+except:
+    print(&quot;An unknown error occurred.&quot;)
+
+try:
+    age = int(&quot;old&quot;)
+except ValueError as e:
+    print(f&quot;Failed to convert to an integer: {e}&quot;)
+
+try:
+    # Code that might raise different errors
+    my_list = [1, 2, 3]
+    print(my_list[5])
+except (IndexError, ValueError):
+    print(&quot;An index or value error occurred!&quot;)
+
+try:
+    # Code that might raise an error
+    value = 10 / 0 
+except ZeroDivisionError:
+    # Code to handle the specific error
+    print(&quot;Cannot divide by zero!&quot;)</pre>
+</section>
+{% endblock %}

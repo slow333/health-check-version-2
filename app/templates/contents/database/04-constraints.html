@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %} PostgreSQL {% endblock %}
+
+{% block header %} SQL constraints {% endblock %}
+
+{% block content %}
+<section>
+  <p>: 테이블에 있는 데이터에 대해 규칙을 정의하는데 사용됨, 이 규칙을 위반하면 action이 중단됨</p>
+  <h3>SYNTAX</h3>
+<pre>CREATE TABLE table_name (
+  column1 datatype constraint,
+  column3 datatype constraint,
+  ....
+  );</pre>
+<!-- @@@@@@@@@@@@@@ CONSTRAINT 정보 보기 @@@@@@@@@@@@@@@@@@@ -->
+<h4>CONSTRAINTS 정보 보기</h4>
+<pre>SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+  WHERE TABLE_SCHEMA = 'db name' AND TABLE_NAME = 'table name';
+  SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+  WHERE TABLE_SCHEMA = 'mydb';</pre>
+
+<h3>SQL Constraints 종류</h3>
+<ul>
+  <li>INDEX: 검색 속도 향상</li>
+  <li>NOT NULL: NULL을 허용하지 않음</li>
+  <li>UNIQUE: 중복된 값을 허용하지 않음</li>
+  <li>PRIMARY KEY: NOT NULL + UNIQUE, 기본키로 설정</li>
+  <li>FOREIGN KEY: 다른 테이블의 기본키를 참조하는 외래키 설정</li>
+  <li>CHECK: 조건을 만족하는 값만 허용</li>
+  <li>DEFAULT: 기본값 설정</li>
+  <li>FULLTEXT: 텍스트 검색을 위한 인덱스</li>
+  <li>SPATIAL: 공간 데이터 검색을 위한 인덱스</li>
+  <li>AUTO_INCREMENT: 자동으로 증가하는 정수값을 생성</li>
+  <li>CASCADE: 외래키가 참조하는 기본키가 변경될 때 ...</li>
+</ul>
+<!-- @@@@@@@@@@@@@@ index @@@@@@@@@@@@@@@@@@@ -->
+<h3>INDEX; 특정 컬럼에 대한 검색 속도를 높임</h3>
+<p>인덱스는 테이블의 특정 컬럼에 대한 검색 속도를 높이기 위해 사용됩니다. </p>
+<p>인덱스는 해당 조건에 맞는 테이블의 데이터를 정렬하여 저장하며,
+  검색 시 빠르게 찾을 수 있도록 도와줍니다. 그러나 update시에는 시간이 좀더 소요됨.</p>
+<p>사용자에게는 안보임</p>
+
+<h4>show indexes</h4>
+  <pre>SHOW INDEXS FROM table_name\G; 
+  -- index가 있는 column에 대한 정보를 보여줌</pre>
+
+<h4>create index; 테이블 생성시 적용</h4>
+<pre>CREATE TABLE Customers (
+  CustomerID int NOT NULL,
+  CustomerName varchar(255) NOT NULL,
+  INDEX (CustomerName)
+  -- OR, CONSTRAINT IDX_CustomerName INDEX (CustomerName)
+  );</pre>
+
+<h4>CREATE INDEX로 추가; 중복 인데스 허용</h4>
+<pre>CREATE INDEX index_name ON table_name (column1, column2, ...);</pre>
+<pre>CREATE INDEX idx_customer_name
+  ON Customers (CustomerName, Age, ...);
+  -- 이렇게 하면 인덱스 순서가 customerName, age 순으로 이루러짐(seq_in_index에 1, 2로 표시됨)
+  -- 인덱스 적용시 순서가 중요함
+  -- 인덱스를 추가허면 순서가 다음에 적용됨
+  -- 하나씩 적용하면 seq_in_index가 1로 적용됨, 여러개 한번에 해야 우선순위를 갖음
+  ALTER TABLE mydb.employees
+  ADD INDEX \`job_title_idx\` (job_title);
+  explain select * from mydb.employees where job_title = 'Manager'\G; </pre>
+
+<h4>DROP INDEX</h4>
+<pre>ALTER TABLE table_name DROP INDEX index_name;</pre>
+
+<h4>CREATE UNIQUE INDEX</h4>
+<h5>중복 인데스 허용 안함</h5>
+<pre>CREATE UNIQUE INDEX index_name 
+  ON table_name (column1, column2, ...);</pre>
+
+<h4>CREATE FULLTEXT INDEX</h4>
+<pre>CREATE FULLTEXT INDEX index_name 
+  ON table_name (column1, column2, ...);</pre>
+
+<h4>CREATE SPATIAL INDEX</h4>
+<pre>CREATE SPATIAL INDEX index_name ON table_name (column1, column2, ...);</pre>
+
+<!-- @@@@@@@@@@@@@@ not null @@@@@@@@@@@@@@@@@@@ -->
+<h3>NOT NULL</h3>
+<pre>CREATE TABLE Customers (
+  CustomerID int NOT NULL,
+  CustomerName varchar(255) NOT NULL );
+  ALTER TABLE Persons MODIFY COLUMN Age int NOT NULL;</pre>
+<!-- @@@@@@@@@@@@@@ unique @@@@@@@@@@@@@@@@@@@ -->
+<h3>UNIQUE</h3>
+<h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Customers (
+  CustomerID int NOT NULL,
+  CustomerName varchar(255) NOT NULL,
+  UNIQUE(CustomerID, CustomerName)
+  -- OR, CONSTRAINT UC_Customer UNIQUE (CustomerID, CustomerName)
+  );</pre>
+<h4>ALTER TABLE로 추가</h4>
+<pre>ALTER TABLE Persons ADD UNIQUE (ID);</pre>
+<pre>ALTER TABLE Persons ADD CONSTRAINT UC_Person UNIQUE (ID, LastName);</pre>
+    <h4>DROP a UNIQUE Constraint</h4>
+<pre>ALTER TABLE Persons DROP INDEX UC_Person;</pre>
+<!-- @@@@@@@@@@@@@@ primRY KEY @@@@@@@@@@@@@@@@@@@ -->
+<h3>PRIMARY KEY</h3>
+<h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Customers (
+  CustomerID int NOT NULL,
+  CustomerName varchar(255) NOT NULL,
+  PRIMARY KEY (CustomerID)
+  -- OR, CONSTRAINT PK_Customer PRIMARY KEY (CustomerID, CustomerName)
+  );</pre>
+<h4>ALTER TABLE로 추가</h4>
+<pre>ALTER TABLE Persons ADD PRIMARY KEY (ID);
+ALTER TABLE Persons 
+  ADD CONSTRAINT PK_Person PRIMARY KEY (ID, LastName);</pre>
+
+<h4>DROP a PRIMARY KEY Constraint</h4>
+<pre>ALTER TABLE Persons DROP PRIMARY KEY;</pre>
+<!-- @@@@@@@@@@@@@@ FOREIGN KEY @@@@@@@@@@@@@@@@@@@ --> 
+<h3>FOREIGN KEY</h3>
+<h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Orders (
+  OrderID INT NOT NULL,
+  OrderNumber INT NOT NULL,
+  CustomerID INT FOREIGN KEY (CustomerID) 
+    REFERENCES Customers(CustomerID),
+  PRIMARY KEY (OrderID),
+  -- OR, FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+  -- OR, CONSTRAINT FK_Customer FOREIGN KEY (CustomerID)
+  REFERENCES Customers(CustomerID)
+  );</pre>
+<h4>ALTER TABLE로 추가</h4>
+<pre>ALTER TABLE Orders ADD FOREIGN KEY (CustomerID)
+  REFERENCES Customers(CustomerID);
+  ALTER TABLE Orders ADD CONSTRAINT FK_Customer
+  FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);</pre>
+    <h4>DROP a FOREIGN KEY Constraint</h4>
+<pre>ALTER TABLE Orders DROP FOREIGN KEY FK_Customer;</pre>
+<pre> alter table car
+  add column customer_id INT;
+  alter table car
+  add constraint fk_customer_id foreign key (customer_id)
+  references customers(customer_id);</pre>
+<!-- @@@@@@@@@@@@@@ CHECK @@@@@@@@@@@@@@@@@@@ --> 
+<h3>CHECK</h3>
+<h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Persons (
+  ID int NOT NULL,
+  LastName varchar(255) NOT NULL,
+  Age int,
+  CHECK (Age &gt;= 18)
+  -- OR, CONSTRAINT CHK_Age CHECK (Age &gt;= 18 AND City = 'Sandnes')
+  );</pre>
+<h4>ALTER TABLE로 추가</h4>
+<pre>ALTER TABLE Persons ADD CHECK (Age &gt;= 18);
+  ALTER TABLE Persons ADD CONSTRAINT CHK_Age
+  CHECK (Age &gt;= 18 AND City = 'Sandnes');</pre>
+    <h4>DROP a CHECK Constraint</h4>
+<pre>ALTER TABLE Persons DROP CHECK CHK_Age;</pre>
+<!-- @@@@@@@@@@@@@@ DEFAULT @@@@@@@@@@@@@@@@@@@ --> 
+<h3>DEFAULT</h3>
+<h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Persons (
+  ID int NOT NULL,
+  LastName varchar(255) NOT NULL,
+  Age int DEFAULT 18,
+  -- OR, CONSTRAINT DF_Age DEFAULT 18 FOR Age,
+  orderDate DATE DEFAULT GETDATE()
+  );</pre>
+<h4>ALTER TABLE로 추가</h4>
+<pre>ALTER TABLE Persons ALTER Age SET DEFAULT 18;</pre>
+    <h4>DROP a DEFAULT Constraint</h4>
+<pre>ALTER TABLE Persons ALTER Age DROP DEFAULT;</pre>
+    <h3>AUTO INCREMENT</h3><p>정수형 데이터에 대해 자동으로 증가하는 값을 생성</p>
+    <h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Customers (
+  ID int NOT NULL AUTO_INCREMENT,
+  LastName varchar(255) NOT NULL,
+  Age int,
+  PRIMARY KEY (ID)
+  );</pre>
+    <h4>자동으로 1부터 시작함(변경하는 방법)</h4>
+<pre>ALTER TABLE Customers AUTO_INCREMENT = 100;</pre>
+
+<h3>CASCADE</h3>
+<ul>
+  <li>ON UPDATE CASCADE: 외래키가 참조하는 기본키가 변경될 때 외래키도 자동으로 변경</li>
+  <li>ON DELETE CASCADE: 외래키가 참조하는 기본키가 삭제될 때 외래키도 자동으로 삭제</li>
+  <li>ON DELETE SET NULL: 외래키가 참조하는 기본키가 삭제될 때 외래키를 NULL로 설정</li>
+  <li>ON DELETE SET DEFAULT: 외래키가 참조하는 기본키가 삭제될 때 외래키를 기본값으로 설정</li>
+  <li>ON DELETE RESTRICT: 외래키가 참조하는 기본키가 삭제될 때 외래키를 삭제할 수 없음</li>
+  <li>ON DELETE NO ACTION: 외래키가 참조하는 기본키가 삭제될 때 외래키를 삭제할 수 없음</li>
+  <li>ON DELETE SET DEFAULT: 외래키가 참조하는 기본키가 삭제될 때 외래키를 기본값으로 설정</li>
+  <li>ON DELETE SET NULL: 외래키가 참조하는 기본키가 삭제될 때 외래키를 NULL로 설정</li>
+  <li>ON UPDATE SET NULL: 외래키가 참조하는 기본키가 변경될 때 외래키를 NULL로 설정</li>
+  <li>ON UPDATE SET DEFAULT: 외래키가 참조하는 기본키가 변경될 때 외래키를 기본값으로 설정</li>
+  <li>ON UPDATE CASCADE: 외래키가 참조하는 기본키가 변경될 때 외래키도 자동으로 변경</li>
+  <li>ON UPDATE CASCADE: 외래키가 참조하는 기본키가 변경될 때 외래키도 자동으로 변경</li>
+</ul>
+<h4>테이블 생성시 적용</h4>
+<pre>CREATE TABLE Orders (
+  OrderID int NOT NULL,
+  OrderNumber int NOT NULL,
+  CustomerID int,
+  PRIMARY KEY (OrderID),
+  FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+  );</pre>
+</section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %} Server Health Check {% endblock %}
+{% block header %} Edit Servers List {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>'{{ user.username }}'의 Allowed Servers 목록 수정</h2>
+    <div>
+        <p>현재 Allowed Servers:</p>
+        <ul>
+            {% for server in user.allowed_servers %}
+                <li>{{ server.server_name }} ({{ server.ip_addr }})</li>
+            {% else %}
+                <li>허용된 서버가 없습니다.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form method="POST" action="/auth/{{user.id}}/manage_server">
+        <div class="form-group">
+            <label for="allowed_servers">OPERATORS</label>
+            <select multiple class="form-control" id="allowed_servers"
+                    name="allowed_servers" autofocus>
+                {% for server in servers %}
+                    {% if server in user.allowed_servers %}
+                        <option value="{{ server.id }}" selected>{{ server.server_name }}</option>
+                    {% else %}
+                        <option value="{{ server.id }}">{{ server.server_name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <small class="form-text text-muted">Ctrl을 누르고 여러개 선택하세요.</small>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Update Server List</button>
+        <a href="{{ url_for('auth.user_profile', id=current_user.id) }}" class="btn btn-secondary mt-3">취소</a>
+    </form>
+</div>
+{% endblock %}

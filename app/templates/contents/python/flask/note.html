@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %} Flask {% endblock %}
+{% block header %} Note for Flask {% endblock %}
+  
+{% block content %}
+<section>
+<h3>flask app 패스워드 변경</h3>
+<h4>google email을 smtp로 활용할려면 </h4>
+<p>2단계 인증을 설정하고 app 비밀번호를 설정해야 함</p>
+<p>그냥하면 인증 애러 남</p>
+
+<h4>app과 Blueprint 간 순환 참조 에러</h4>
+<p>별도의 파일을 만들어서 import 해야 함</p>
+<pre># extensions.py
+from flask_mail import Mail # type: ignore
+
+mail = Mail()
+
+# app.py
+from bp.myapp.extensions import mail
+mail.init_app(app)
+
+# auth.py
+from bp.myapp.extensions import mail
+</pre>
+
+<h3>암호 변경 기능 </h3>
+<pre>
+def reset_token(id, expiration=1300):
+    s = Serializer(app.config.get('SECRET_KEY'), expiration)
+    return s.dumps({'reset': id}).decode('utf-8')
+
+def confirm_token(token):
+    s = Serializer(app.config.get('SECRET_KEY'))
+    try:
+        id = s.loads(token)['reset']
+    except:
+        return None
+    db = get_db()
+    with db.cursor() as cur:
+        cur.execute('SELECT * FROM users WHERE id = %s;', (id,))
+        user = cur.fetchone()
+    if user is None:
+        return None
+    return user
+
+def send_email(user):
+    token = reset_token(user['id'])
+    msg = Message('Reset Your Password', recipients=[user['email']], sender='slow33@gmail.com')
+    msg.body = f'''
+To reset your password, visit the following link:
+  {request.host}/auth/reset_password/{token}
+If you did not make this request then simply ignore this email and no changes will be made.'''
+    mail.send(msg)
+
+@bp.route('/reset_password', methods=['GET','POST'])
+def reset_password():
+    if request.method == 'GET':
+        return render('myapp/auth/reset_request.html')
+    elif request.method == 'POST':
+        email = request.form.get('email')
+        db = get_db()
+        with db.cursor() as cur:
+            cur.execute('SELECT * FROM users WHERE email = %s;', (email,))
+            user = cur.fetchone()
+        if user is None:
+            flash('No account found with that email address.')
+            return render('myapp/auth/reset_request.html')
+
+        send_email(user)
+        flash('A password reset link has been sent to your email address.')
+        return redirect('/auth/login')
+
+@bp.route('/reset_password/<token>', methods=['GET','POST'])
+def reset_with_token(token):
+    user = confirm_token(token)
+    if user is None:
+        flash('The password reset link is invalid or has expired.')
+        return redirect('/auth/login')
+    if request.method == 'GET':
+        return render('myapp/auth/reset_with_token.html', token=token)
+    elif request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return render('myapp/auth/reset_with_token.html')
+        hashed_password = generate_password_hash(password)
+        db = get_db()
+        with db.cursor() as cur:
+            cur.execute('UPDATE users SET password = %s WHERE id = %s;',
+                       (hashed_password, user['id']))
+        db.commit()
+        flash('Your password has been reset.')
+        return redirect('/auth/login')
+</pre>
+</section>
+{% endblock %}

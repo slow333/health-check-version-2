@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} User Profile {% endblock %}
+{% block header %}User Profile {% endblock %}
+
+{% block content %}
+  {% if current_user.is_admin %}
+    {% for profile in profiles %}
+      {% include 'auth/template_user_profile.html' %}
+      {% if not loop.last %} <hr> {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if current_user.id == profile.id %}
+    {% include 'auth/template_user_profile.html' %}
+  {% endif %}
+
+{% endblock content %}

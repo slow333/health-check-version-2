@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %} Create Command {% endblock %}
+{% block header %} Create a New Command {% endblock %}
+{% block content %}
+ <div class="container mt-4">
+    <form method="POST" action="{{ url_for('commands.create_cmd') }}">
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select class="form-control" id="category" name="category" required>
+                    <option value="">Select Category</option>
+                {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="cmd">Command</label>
+            <input type="text" class="form-control" id="cmd" name="cmd" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Create Command</button>
+        <a class="btn btn-secondary  mt-3" href="/health/commands/">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

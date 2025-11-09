@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %} Python {% endblock %}
+{% block header %} class and module {% endblock %}
+  
+{% block content %}
+<section>
+<h3>python class</h3>
+<h5>class
+내부에서 함수를 생성시에 반드시 self(== this)를 인수로 받아야함</h5>
+<h5>생성자 함수</h5>
+<pre>def __init__(self, first, second)
+  self.first = first
+  self.second = second
+형태로 지정함</pre>
+<p>사용은 a = FourCal(4, 2) 처럼함</p>
+<pre>class FourCal:
+  def __init__(self, first, second):
+    self.first = first
+    self.second = second
+  def setdata(self, first, second):
+    self.first = first
+    self.second = second
+  def add(self):
+    result = self.first + self.second
+    return result
+  def mul(self):
+    result = self.first * self.second
+    return result
+  def sub(self):
+    result = self.first - self.second
+    return result
+  def div(self):
+    result = self.first / self.second
+    return result
+a = FourCal() # 생성자가 있으면 애러남
+b = FourCal() # 생성자가 있으면 애러남
+a.setdata(4, 2)
+a.add()
+b.setdata(3, 8)
+b.add()</pre>
+<h4>상속</h4>
+<h5>새로만든
+class의 (parent class) 형태로 지정해서 사용할 수 있음</h5>
+<pre>class MoreFourCal(FourCal):
+  def pow(self):
+    result = self.first ** self.second
+    return result
+a = MoreFourCal(4, 2)
+a.pow()</pre>
+<h4>overriding</h4>
+<h5>부모
+클래스에 있는 메서드를 동일한 이름으로 다시 만들어서 사용할 수 있음</h5>
+<pre>class SafeFourCal(FourCal):
+  def div(self):
+    if self.second == 0:
+      return 0
+    else:
+      return self.first / self.second
+  def sub(self):
+    if self.first &lt; self.second:
+      self.first, self.second = self.second, self.first
+    return self.first - self.second
+a = SafeFourCal(4, 0)
+a.sub()</pre>
+<h4>클래스 변수</h4>
+<h5>클래서 변수는 클래스로 만든 모든 객체에 공유된다.</h5>
+<h5>기본적으로 객체 생성없이 바로 사용 가능</h5>
+<pre>class Family:
+  lastname = &quot;김&quot;
+print(Family.lastname)
+a = Family()
+b = Family()
+print(a.lastname)
+print(Family.lastname)
+Family.lastname = &quot;박&quot;
+print(Family.lastname)
+print(b.lastname)</pre>
+</section>
+<section>
+<h3>module 만들기</h3>
+<pre>//mod1.py
+def add(a,b):
+    return a+b
+def sub(a,b):
+    return a-b</pre>
+<h3>module 불러오기</h3>
+<pre>import mod1
+print(mod1.add(3,4))
+print(mod1.sub(4,2))</pre>
+<h3>if <strong>name</strong> ==
+“<strong>main</strong>”의 의미</h3>
+<pre>//mod1.py
+def add(a,b):
+    return a+b
+def sub(a,b):
+    return a-b
+add(3,4)
+sub(4,2)</pre>
+<p>위와 같이하면 import 시 자동으로 실행됨<br />
+shell에서 import mod1을 하면 add(3,4)와 sub(4,2)가 실행됨<br />
+이를 방지하기 위해</p>
+<pre>//mod1.py
+def add(a,b):
+    return a+b
+def sub(a,b):
+    return a-b
+if __name__ == &quot;__main__&quot;:
+  add(3,4)
+  sub(4,2)</pre>
+<p>위와 같이 하면 shell에서 python mod1.py를 하면 if
+<strong>name</strong> == “<strong>main</strong>” 이 참이되어
+실행되고,<br />
+import mod1을 하면 실행되지 않음</p>
+<h3>클래스를 포함한 모듈</h3>
+<pre>//mod2.py
+PI = 3.141592
+class Math:
+    def solv(self, r):
+        return PI * (r ** 2)
+def add(a,b):
+    return a+b</pre>
+<h4>사용</h4>
+<pre>import mod2
+print(mod2.PI)
+a = mod2.Math()
+print(a.solv(2))
+print(mod2.add(mod2.PI,4.4))</pre>
+</section>
+{% endblock %}

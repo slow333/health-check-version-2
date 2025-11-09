@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}SAR Traffic Data
+{% endblock %}
+{% block header %} Server Traffic (SAR)
+    {% if current_user.is_authenticated %}
+    <span class="d-flex justify-content-end" style="margin-top:-30px">
+        <a class="btn btn-outline-danger fs-sm" href="/health/sar_traffic/generate">
+            Generate Traffic Data</a>
+    </span>
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-3 d-flex flex-column gap-2 align-items-center">
+    <form method="get" action="/health/sar_traffic/" accept-charset="utf-8" 
+          class="d-flex justify-content-between align-items-center gap-1 fs-sm">
+      <input type="text" name="hostname" placeholder="hostname"
+         value="{{ hostname }}" class="form-control d-inline-block fs-sm" style="width: 110px;">
+      <input type="text" name="ip_address" placeholder="IP Address" 
+        value="{{ ip_address }}" class="form-control d-inline-block fs-sm" style="width: 140px;">
+      start:<input type="date" name="start_date" placeholder="Start date"
+         value="{{ start_date }}" class="form-control d-inline-block fs-sm" style="width: 120px;">
+      end:<input type="date" name="end_date" placeholder="End date"
+         value="{{ end_date }}" class="form-control d-inline-block fs-sm" style="width: 120px;">
+      <button type="submit" class="btn btn-outline-secondary fs-sm">Search</button>
+      <a class="btn btn-outline-secondary fs-sm" href="/health/sar_traffic/">Reset</a>
+    </form>
+    <table class="table fs-sm w-100" style="width: 100%;">
+        <thead>
+        <tr>
+            <th>Hostname</th>
+            <th>IP Address</th>
+            <th>Interface</th>
+            <th>Date Time</th>
+            <th>rx kbps</th>
+            <th>tx kpbs</th>
+            <th>hostinfos</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for data in traffic_data %}
+        <tr>
+            <td>{{ data.hostname }}</td>
+            <td>{{ data.ip_address }}</td>
+            <td>{{ data.interface_name }}</td>
+            <td>{{ data.date_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ data.rxkB_per_second*8 }}</td>
+            <td>{{ data.txkB_per_second*8 }}</td>
+            <td>{{ data.host_infos.ip_address }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% with 
+      target_app='health/sar_traffic', 
+      page=pagenation.page, 
+      total_pages=pagenation.total_pages, 
+      per_page=pagenation.per_page, 
+      page_length=pagenation.page_len, 
+      start_page=pagenation.start_page, 
+      end_page=pagenation.end_page,
+      request_args=pagenation.request_args
+      %}
+        {% include 'pagenation.html' with context %}
+    {% endwith %}
+</div>
+{# pagenation: target_app, page, total_pages, per_page, page_length, start_page, end_page #}
+{% endblock %}

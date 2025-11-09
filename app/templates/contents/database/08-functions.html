@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %} PostgreSQL {% endblock %}
+
+{% block header %} 문자관련, if 등 {% endblock %}
+
+{% block content %}
+<section>
+  <h2>문자 관련 함수</h2>
+  <h3>trim</h3>
+<pre>SELECT TRIM('  Hello World!  '); -- 'Hello World!'
+SELECT TRIM(LEADING ' ' FROM '  Hello World!  '); -- 'Hello World!  ' 
+SELECT TRIM(TRAILING '*' FROM '  Hello World!****'); -- '  Hello World!'</pre>  
+
+  <h3>concat</h3>
+<pre>SELECT CONCAT('Hello', ' ', 'World!'); -- 'Hello World!'
+SELECT CONCAT('Hello', ' ', 'World!', 123); -- 'Hello World!123'</pre>
+
+  <h3>concat_ws</h3>
+  <pre>SELECT CONCAT_WS('-', '2023', '10', '01'); -- '2023-10-01'</pre>
+
+  <h3>substring</h3>
+  <pre>SELECT SUBSTRING('Hello World!', 1, 5); -- 'Hello'</pre>
+
+  <h3>replace</h3>
+  <pre>SELECT REPLACE('Hello World!', 'World', 'MySQL'); -- 'Hello MySQL!'</pre>
+
+  <h3>instr, locate: index of string</h3>
+  <pre>SELECT INSTR('Hello World!', 'World'); -- 7 (찾은 문자열의 시작 위치)
+
+SELECT LOCATE('World', 'Hello World!'); -- 7 (찾은 문자열의 시작 위치)
+SELECT LOCATE('World', 'Hello World!', 8); -- 0 (8번째 이후에 찾지 못함)</pre>
+
+  <h3>upper, lower</h3>
+  <pre>SELECT UPPER('Hello World!'); -- 'HELLO WORLD!'
+SELECT LOWER('Hello World!'); -- 'hello world!'</pre>
+
+  <h3>length</h3>
+  <pre>SELECT LENGTH('Hello World!'); -- 13</pre>
+
+  <h3>Left pad, Right pad</h3>
+  <pre>SELECT LPAD('Hello', 10, '*'); -- '*****Hello'
+  SELECT RPAD('Hello', 10, '*'); -- 'Hello*****'</pre>
+
+  <h3>coalesce</h3>
+  <pre>SELECT COALESCE(NULL, 'Hello', 'World'); -- 'Hello'
+SELECT COALESCE(NULL, NULL, 'World'); -- 'World'
+SELECT COALESCE(NULL, NULL, NULL); -- NULL</pre>
+</section>
+<section>
+   <!--*********** 조건 절 ******************--> 
+  <h2>조건 절</h2>
+  <h3>if: 2가지 선택 </h3>
+  <pre>SELECT IF(1 &gt; 0, '참입니다.', '거짓입니다.');</pre>
+
+  <h3>case: 2가지 이상의 경우에...</h3>
+  <pre>SELECT CASE WHEN 1 &gt; 0 THEN 'True' ELSE 'False' END; -- 'True'
+SELECT CASE 
+  WHEN 가격 &gt; 30 THEN '비싸요' 
+  WHEN 가격 &lt;= 30 THEN '저렴해요' 
+  ELSE '가격 정보 없음'
+END;</pre>
+
+  <h3>ifnull; null 일때 기본값 지정</h3>
+<pre>SELECT IFNULL(NULL, 'Hello'); -- 'Hello'
+SELECT IFNULL('Hello', 'World'); -- 'Hello'</pre>
+
+  <h3>nullif: 2개의 값이 같으면 null, 아니면 첫번째 값</h3>
+  <pre>SELECT NULLIF('Hello', 'Hello'); -- NULL
+  SELECT NULLIF('Hello', 'World'); -- 'Hello'</pre>
+</section>
+<section> 
+ <!--*********** 수학 함수 ******************-->
+<h2>수학 함수</h2>
+  <h3>format; 숫자를 지정된 형식으로 포맷</h3>
+  <pre>SELECT FORMAT(1234567.89, 2); -- '1,234,567.89'</pre>
+
+<h3>round; 숫자를 반올림</h3>
+  <pre>SELECT ROUND(123.4567, 2); -- 123.46
+SELECT ROUND(123.4567); -- 123
+FLOOR(i + RAND() * (J - I); -- I와 J 사이의 정수
+update car set car.customer_id = FLOOR(rand()*10 + 1); -- 1~ 10의 값</pre>
+
+<h3>rand; 랜덤 숫자 생성</h3>
+  <pre>SELECT RAND(); -- 0과 1 사이의 랜덤 숫자
+SELECT RAND(123); -- 123을 시드로 사용하여 랜덤 숫자 생성</pre>
+
+<h3>pi; 원주율 반환</h3>
+  <pre>SELECT PI(); -- 3.141592653589793</pre>
+
+<h3>ceil; 숫자를 올림</h3>
+  <pre>SELECT CEIL(123.4567); -- 124
+SELECT CEIL(-123.4567); -- -123</pre>
+
+<h3>floor; 숫자를 내림</h3>
+  <pre>SELECT FLOOR(123.4567); -- 123
+SELECT FLOOR(-123.4567); -- -124</pre>
+
+<h3>mod; 나머지 연산</h3>
+  <pre>SELECT MOD(10, 3); -- 1
+SELECT 7 $ 2; -- 1</pre>
+
+<h3>abs; 절대값</h3>
+<pre>SELECT ABS(-123.4567); -- 123.4567
+SELECT ABS(123.4567); -- 123.4567</pre>
+
+<h3>sign; 숫자의 부호 반환</h3>
+<pre>SELECT SIGN(-123.4567); -- -1
+SELECT SIGN(0); -- 0
+SELECT SIGN(123.4567); -- 1</pre>
+
+<h3>greatest, least</h3>
+<pre>SELECT GREATEST(1, 2, 3); -- 3
+  SELECT LEAST(1, 2, 3); -- 1</pre>
+
+<h3>convert: cast type</h3>
+  <pre>SELECT CONVERT('123.4567', DECIMAL(10, 2)); -- 123.46
+SELECT CAST('123.4567' AS DECIMAL(10, 2)); -- 123.46
+SELECT CONVERT('2023-10-01', DATE); -- '2023-10-01'
+SELECT CAST('2023-10-01' AS DATE); -- '2023-10-01'
+SELECT CONVERT('01', DECIMAL); -- INT는 안됨
+SELECT CAST(003 AS CHAR); -- '3'
+SELECT '01' = '1', CONVERT('01', DECIMAL) = CONVERT('1', DECIMAL);</pre>
+</section>
+<section> 
+<!--*********** 시스템 함수 관련 ******************-->
+<h2>시스템 함수</h2>
+<h3>version; MySQL 버전 반환</h3>
+  <pre>SELECT VERSION(); -- MySQL 서버 버전 반환</pre>
+
+<h3>user; 현재 사용자 반환</h3>
+  <pre>SELECT USER(); -- 현재 사용자 반환</pre>
+
+<h3>current_user; 현재 사용자 반환</h3>
+  <pre>SELECT CURRENT_USER(); -- 현재 사용자 반환</pre>
+
+<h3>database; 현재 데이터베이스 반환</h3>
+  <pre>SELECT DATABASE(); -- 현재 데이터베이스 반환</pre>
+
+<h3>schema; 현재 스키마 반환</h3>
+  <pre>SELECT SCHEMA(); -- 현재 스키마 반환</pre>
+</section>
+<section> 
+  <!--*********** 시간, 날짜 함수 관련 ******************-->
+<h2>DATE, TIME</h2>
+  <pre>
+CURDATE(), CURRENT_DATE(), CURRENT_DATE; -- 현재 날짜 반환
+CURTIME(), CURRENT_TIME(), CURRENT_TIME; -- 현재 시간 반환
+NOW(), CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP; -- 현재 날짜와 시간 반환
+SYSDATE(), SYSDATE; -- 현재 날짜와 시간 반환      </pre>
+
+<h3>date_format</h3>
+  <pre>SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'); -- '2023-10-01 12:34:56'</pre>
+
+<h3>날짜 관련 데이터 추출하기</h3>
+  <pre>DATE | TIME | YEAR | MONTH | DAY = DAYOFMONTH('2023-10-01 12:34:56')
+  DATENAME | MONTHNAME | WEEKDAY ('2023-10-01 12:34:56')
+  HOUR | MINUTE | SECOND('2023-10-01 12:34:56');
+-- 현재 날짜, 시간, 년, 월, 일, 시, 분, 초 반환
+DATE(NOW()) / TIME(NOW()) / YEAR(NOW()) / MONTH(NOW()) / DAY(NOW()) 
+/ HOUR(NOW()) / MINUTE(NOW()) / SECOND(NOW());
+
+  CONCAT_WS(' ', DATE(NOW()), TIME(NOW())); -- '2023-10-01 12:34:56' </pre>
+
+<h3>EXTRACT ; 날짜에서 특정 부분 추출</h3>
+  <pre>EXTRACT(YEAR|MONTH|DAY FROM '2023-10-01');</pre>
+
+<h3>차이 계산</h3>
+<pre>SELECT DATEDIFF('2023-10-01', '2023-09-01'); -- 30
+SELECT TIMESTAMPDIFF(DAY | MONTH | YEAR, '2023-10-01', '2002-09-01');
+
+SELECT name, birth, CURDATE(), TIMESTAMPDIFF(YEAR, birth, CURDATE()) AS age
+FROM employees WHERE birth IS NOT NULL;</pre>
+
+<h3>date_add; 날짜에 시간 더하기</h3>
+<pre>SELECT DATE_ADD | ADDDATE('2023-10-01', INTERVAL 1 DAY); -- '2023-10-02'
+SELECT DATE_ADD('2023-10-01', INTERVAL 1 MONTH); -- '2023-11-01'</pre>
+
+<h3>date_sub; 날짜에서 시간 빼기</h3>
+<pre>SELECT DATE_SUB | SUBDATE('2023-10-01', INTERVAL 1 DAY); -- '2023-09-30'
+SELECT DATE_SUB('2023-10-01', INTERVAL 1 MONTH); -- '2023-09-01'</pre>
+
+<h3>unix_timestamp; 현재 시간을 유닉스 타임스탬프로 반환</h3>
+<pre>SELECT UNIX_TIMESTAMP(); -- 현재 시간을 유닉스 타임스탬프로 반환
+SELECT UNIX_TIMESTAMP('2023-10-01 12:00:00'); -- 특정 시간을 유닉스 타임스탬프로 반환</pre>
+
+<h3>from_unixtime; 유닉스 타임스탬프를 날짜로 변환</h3>
+<pre>SELECT FROM_UNIXTIME(UNIX_TIMESTAMP()); -- 현재 시간을 날짜로 변환
+SELECT FROM_UNIXTIME(1696129200); -- 특정 유닉스 타임스탬프를 날짜로 변환</pre>
+
+<h3>utc_date, UTC_TIME ; UTC 반환</h3>
+<pre>SELECT UTC_DATE(); -- UTC 날짜 반환
+SELECT UTC_TIME(); -- UTC 시간 반환</pre>
+</section>
+{% endblock %}

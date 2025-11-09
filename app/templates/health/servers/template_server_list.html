@@ -1,0 +1,22 @@
+
+<td>{{ server['server_name'] }}</td>
+<td>{{ server['id_ip'] }}</td>
+<td>{{ server['port'] }}</td>
+<td>{{ server['password'] }}</td>
+<td>
+    {% for operator in server.operators %}
+        {{ operator.username }}
+    {% if not loop.last %}, {% endif %}
+    {% endfor %}
+</td>
+<td>{{ server['created'].strftime('%Y-%m-%d %H:%M') if server['created'] else ''}}</td>
+<td>
+    {{ server.hostinfo.hostname if server.hostinfo else 'No Hostname' }}
+</td>
+<td><a class="btn btn-outline-primary fs-sm" href="/health/servers/{{ server['id'] }}/edit">
+        Edit</a>
+</td>
+<td>
+    <a class="btn btn-outline-danger fs-sm" href="/health/servers/{{ server['id'] }}/delete">
+        Delete</a>
+</td>

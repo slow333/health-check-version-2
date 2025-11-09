@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %} Python {% endblock %}
+{% block header %} Print and format print {% endblock %}
+  
+{% block content %}
+<section>
+<h3>print</h3>
+<p>print(‘life’, ‘is’, ‘too short’)<br />
+print(‘life’ + ‘is’ + ‘too short’)<br />
+print(‘a’, ‘b’, sep=‘-’) # a-b<br />
+print(‘a’, ‘b’, end=‘-’) # a-</p>
+<h3>stdout, stderr</h3>
+<p>import sys<br />
+print(‘a’, ‘b’, file=sys.stderr) # a b<br />
+print(‘a’, ‘b’, file=sys.stdout) # a</p>
+<h3>ljust, rjust, center</h3>
+<p>scores = {‘수학’: 0, ‘영어’: 50, ‘국어’: 100}<br />
+for subject, score in scores.items():<br />
+print(subject.rjust(8), str(score).rjust(4), sep=‘:’)</p>
+<h3>format</h3>
+<p>print(“{}’s score is {}.”.format(“Wonjun”, 100))<br />
+print(“{1}’s score is {0}.”.format(100, “Wonjun”))<br />
+print(“{name}’s score is {score}.”.format(name=“Wonjun”, score=100))</p>
+<h3>f-string</h3>
+<p>name = “Wonjun”<br />
+score = 100<br />
+print(f”{name}’s score is {score}.”)</p>
+<h3>zfill(5)</h3>
+<p>나머지를 0으로 채움</p>
+<h5>빈자리는 빈공간으로 두고, 오른쪽 정렬, 총 10자리</h5>
+<p>print(“{0:< 10}”.format(500))<br />
+## 양수일 땐 +로 표시, 음수일 땐 -로 표시 print(“{0:
+<+10}”.format(500))<br />
+## 왼쪽 정렬하고, 빈칸은 <em>로 채움
+print(“{0:</em>&lt;+10}“.format(500))<br />
+## 3자리 마다 콤마를 찍어주기 print(”{0:,}“.format(10000000000))<br />
+## 3자리 마다 콤마를 찍어주기, 부호도 붙이기
+print(”{0:+,}“.format(10000000000)) ## 3자리 마다 콤마를 찍어주기,
+부호도 붙이고, 자릿수 확보하기 ## 돈이 많으면 행복하니까 빈 자리는 ^로
+채워주기 print(”{0:^&lt;+30,}“.format(10000000000000)) ## 소수점 출력
+print(”{0:f}“.format(5/3)) ## 소수점 특정 자리수 까지만 표시 (소수점 3째
+자리에서 반올림) print(”{0:.2f}“.format(5/3))</p>
+</section>
+{% endblock %}

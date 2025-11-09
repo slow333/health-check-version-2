@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %} PostgreSQL {% endblock %}
+
+{% block header %} JOIN {% endblock %}
+
+{% block content %}
+<section>
+<p>product의 supplierID와 order_detail의 id를 비교하여 같으면
+  product의 name, order_detail의 price, product의 Unit, order_detail의 created_at을 가져온다.</p>
+<pre> SELECT p.name, o.price, p.Unit, o.created_at<br/>
+from product p<br/>
+JOIN order_detail o ON p.supplierID = o.id;</pre>
+<h3>Different Types of SQL JOINs</h3>
+<ul>
+  <li>INNER JOIN: 두 테이블에서 공통되는 것만(교집합)</li>
+  <li>LEFT (OUTER) JOIN: left table을 모두 반환하고, 조건에 맞는 right table을 추가.</li>
+  <li>RIGHT (OUTER) JOIN: left join과 반대</li>
+  <li>FULL (OUTER) JOIN: left 또는 right table에 있는 모든 records.</li>
+  <li>CROSS JOIN: Returns the Cartesian product of the two tables.</li>
+</ul>
+<table>
+  <tr>
+    <td> <img src='/static/image/' alt='inner join' /></td>
+    <td> <img src='/static/image/' alt='left join' /></td>
+  </tr>
+  <tr>
+    <td><img src='/static/image/' alt="right join" /></td>
+    <td><img src='/static/image/' alt="full outer join" /></td>
+  </tr>
+</table>
+ <!-- ############## inner join #########################--> 
+<h3>INNER JOIN: 교집합, JOIN하면 기본으로 적용됨</h3>
+<pre>SELECT p.id, p.name, c.name, od.price<br/>
+FROM product p<br/>
+INNER JOIN customer c ON p.id = c.id<br/>
+INNER JOIN order_detail od ON p.supplierID = od.order_id;</pre>
+ <!-- ############## left join #########################--> 
+<h3>LEFT JOIN; FROM table을 갖다 놓고, 조건에 맞는 LEFT JOIN table 값을 우측에 놓음</h3>
+<pre>SELECT column_names FROM table1<br/>
+LEFT JOIN table2<br/>
+ON table1.column_name = table2.column_name;</pre>
+<pre>SELECT p.id, p.name, c.name<br/>
+FROM product p<br/>
+LEFT JOIN customer c <br/>
+ON p.supplierID = c.id ORDER BY c.name;</pre>
+ <!-- ############## right join #########################--> 
+<h3>RIGHT JOIN = RIGHT OUTER JOIN; 기본적으로 table2를 갖다 놓고 조건에 맞는 T1값을 놓음</h3>
+<pre>SELECT column_names FROM table1<br/>
+RIGHT JOIN table2 <br/>
+ON table1.column_name = table2.column_name</pre>
+<pre>SELECT p.id, p.name, c.name<br/>
+FROM product p<br/>
+RIGHT JOIN customer c <br/>
+ON p.supplierID = c.id ORDER BY p.id;</pre>
+ <!-- ############## full join #########################--> 
+<h3>mariadb 미지원, FULL JOIN = FULL OUTER JOIN; LEFT JOIN과 RIGHT JOIN을 합친 것</h3>
+<pre>SELECT column_name(s)<br/>
+FROM table1<br/>
+FULL OUTER JOIN table2<br/>
+ON table1.column_name = table2.column_name WHERE condition; </pre>
+
+ <!-- ############## self join #########################--> 
+<h3>SELF JOINS: 자기 테이블에서 자신을 참조해서 JOIN</h3>
+<pre>SELECT A.Customer_id, A.first_name, A.last_name,<br/>
+  CONCAT(B.first_name, ' ', B.last_name) AS refered_by<br/>
+  FROM Customers A<br/>
+  INNER JOIN Customers B<br/>
+  ON A.referaal_id = b.Customer_id;</pre>
+<pre>SELECT A.employee_id, A.first_name, B.last_name,<br/>
+    concat(B.first_name,' ',B.last_name) as supervisor<br/>
+  FROM employees A
+  INNER JOIN employees B
+  ON A.supervisor_id = B.employee_id;</pre>
+ <!-- ############## union #########################--> 
+<h3>UNION</h3>
+<h4>두 테이블을 아래로 나란히 보여줌, select 값이 둘다 같아야함</h4>
+<pre>-- column 수를 맞추어야 함<br/>
+SELECT column1, column2 FROM table1<br/>
+UNION<br/>
+SELECT column1, column2 FROM table2;</pre>
+
+<h4>"Customers", "Suppliers" 테이블에서 cities를 중복제거 해서 보여줌</h4>
+<pre>SELECT column_name(s) FROM table1<br/>
+UNION<br/>
+SELECT column_name(s) FROM table2; </pre>
+<pre>SELECT City FROM Customers<br/>
+UNION<br/>
+SELECT City FROM Suppliers<br/>
+ORDER BY City;</pre>
+
+<h3>UNION ALL</h3>
+<pre>SELECT City, Country FROM Customers<br/>
+WHERE Country='Germany'<br/>
+UNION ALL<br/>
+SELECT City, Country FROM Suppliers<br/>
+WHERE Country='Germany'<br/>
+ORDER BY City;</pre>
+<pre>-- 그냥 UNION 하면 중복제거 피하기 위해 UNION ALL 사용<br/>
+SELECT CustomerName, City FROM Customers<br/>
+UNION ALL<br/>
+SELECT SupplierName, City FROM Suppliers;</pre>
+</section>
+{% endblock %}

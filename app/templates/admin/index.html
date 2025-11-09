@@ -1,0 +1,22 @@
+{% extends "admin/master.html" %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center flex-column mb-3">
+  <h1>Index Page</h1>
+  <hr class="my-4 w-50 mx-auto border-secondary">
+  <div class="items mt-3">
+    <a class="btn btn-primary" href="/">HOME</a>
+    <a class="btn btn-primary" href="/blogs/">Blogs</a>
+    <a class="btn btn-primary" href="/servers/">Servers</a>
+  </div>
+  
+  <hr class="my-5 w-50 mx-auto border-secondary">
+  <div class="items">
+    <a class="btn btn-outline-primary" href="/auth/login">Login</a>
+    <a class="btn btn-outline-primary" href="/auth/register">Register</a>
+    <a class="btn btn-outline-primary" href="/auth/logout">Logout</a>
+    <a class="btn btn-outline-primary" href="/auth/">auth Home</a>
+  </div>
+
+</div>
+{% endblock %}

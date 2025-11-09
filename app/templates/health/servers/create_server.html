@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %} Create Server {% endblock %}
+{% block header %} Create a New Server {% endblock %}
+{% block content %}
+ <div class="container mt-4">
+    <form method="POST" action="{{ url_for('servers_infos.create_server') }}">
+        <div class="form-group">
+            <label for="server_name">Server Name</label>
+            <input type="text" class="form-control" id="server_name"  name="server_name" required>
+        </div>
+        <div class="form-group">
+            <label for="login_id">Login ID</label>
+            <input type="text" class="form-control" id="login_id" name="login_id" required>
+        </div>
+        <div class="form-group">
+            <label for="ip_address">Server IP</label>
+            <input type="text" class="form-control" id="ip_address" name="ip_address" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" 
+                name="password" placeholder="Leave blank to keep current password">
+        </div>
+        <div class="form-group">
+            <label for="operators">SELECT OPERATORS</label>
+            <select multiple class="form-control" id="operators" name="operators" autofocus >
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <small class="form-text text-muted">Ctrl을 누르고 여러개 선택하세요.</small>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Save Server</button>
+        <a class="btn btn-secondary mt-3" href="/health/servers/">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

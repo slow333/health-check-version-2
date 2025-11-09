@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %} PostgreSQL {% endblock %}
+
+{% block header %} Install PostgreSQL {% endblock %}
+
+{% block content %}
+<section>
+<h2>download and install </h2>
+<pre>RHEL 8 INSTALL
+  # yum module install postgresql:16/server
+  # postgresql-setup --initdb
+    * Initializing database in '/var/lib/pgsql/data'
+    * Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+  # systemctl start postgresql.service
+  # systemctl enable postgresql.service
+  postgres=# CREATE USER mydbuser WITH PASSWORD 'mypasswd' CREATEROLE CREATEDB;
+</pre>
+<h2>PostgreSQL 데이터베이스 초기화, 생성 및 연결</h2>
+<p>이 예제에서는 PostgreSQL 데이터베이스를 초기화하고, 일상적인 데이터베이스 관리 권한이 있는 데이터베이스 사용자를 생성하고, 
+   관리 권한이 있는 데이터베이스 사용자를 통해 모든 시스템 계정에서 액세스할 수 있는 데이터베이스를 생성하는 방법을 보여줍니다.</p>
+<H3>PosgreSQL 서버를 설치합니다.</H3> 
+<PRE># yum module install postgresql:13/server</PRE>
+<H3>  데이터베이스 클러스터를 초기화합니다.</H3>
+<PRE>
+# postgresql-setup --initdb
+* Initializing database in '/var/lib/pgsql/data'
+* Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+</PRE>
+<H3>암호 해시 알고리즘을 scram-sha-256 으로 설정합니다.</H3>
+<PRE>
+/var/lib/pgsql/data/postgresql.conf 파일에서 다음 행을 변경합니다.
+#password_encryption = md5              # md5 or scram-sha-256
+다음으로 변경합니다.
+password_encryption = scram-sha-256
+
+/var/lib/pgsql/data/pg_hba.conf 파일에서 IPv4 로컬 연결에 대해 다음 행을 변경합니다.
+host    all             all             127.0.0.1/32            ident
+다음으로 변경합니다.
+host    all             all             127.0.0.1/32            scram-sha-256
+</PRE>
+<H3>postgresql 서비스를 시작합니다.</H3>
+<PRE> # systemctl start postgresql.service</PRE>
+<H3>  postgres 라는 시스템 사용자로 로그인합니다.</H3>
+<PRE>
+# su - postgres
+PostgreSQL 대화형 터미널을 시작합니다.
+$ psql
+psql (13.7)
+Type "help" for help.
+postgres=#
+
+선택 사항: 현재 데이터베이스 연결에 대한 정보를 얻습니다.
+postgres=# \conninfo
+</PRE>
+<h4>mydbuser 라는 사용자를 만들고, mydbuser 의 암호를 설정한 다음 
+mydbuser 에게 CREATEROLE 및 CREATEDB 권한을 할당합니다.</h4>
+<PRE>
+postgres=# CREATE USER mydbuser WITH PASSWORD 'mypasswd' CREATEROLE CREATEDB;
+CREATE ROLE
+이제 mydbuser 사용자가 일상적인 데이터베이스 관리 작업을 수행할 수 있습니다: 데이터베이스를 생성하고 사용자 인덱스를 관리합니다.
+
+\q meta 명령을 사용하여 대화형 터미널에서 로그아웃합니다.
+  postgres=# \q
+postgres 사용자 세션에서 로그아웃합니다.
+  $ logout
+</PRE>
+<h5>PostgreSQL 터미널에 mydbuser 로 로그인하고 호스트 이름을 지정 </h5>
+<h5>초기화 중에 생성된 기본 postgres 데이터베이스에 연결</h5>
+<PRE>
+# psql -U mydbuser -h 127.0.0.1 -d postgres -p 5432
+cmd => psql -U postgres -d mydb -h localhost -p 5432
+Password for user mydbuser:
+Type the password.
+  psql (13.7)
+  Type "help" for help.
+postgres=>
+</PRE>
+<H3>mydatabase 데이터베이스를 생성합니다.</H3>
+<PRE>
+postgres=> CREATE DATABASE mydatabase;
+CREATE DATABASE
+postgres=>
+
+세션에서 로그아웃합니다.
+  postgres=# \q
+</PRE> 
+<H3>mydatabase에 mydbuser 로 연결합니다.</H3>
+<PRE>
+# psql -U mydbuser -h 127.0.0.1 -d mydatabase
+Password for user mydbuser:
+psql (13.7)
+Type "help" for help.
+mydatabase=>
+
+선택 사항: 현재 데이터베이스 연결에 대한 정보를 얻습니다.
+mydatabase=> \conninfo
+You are connected to database "mydatabase" as user
+</PRE>
+<h2>basic command</h2>
+
+<h4>DROP DATABSE</h4>
+<pre>=# DROP DATABASE database_name;</pre>
+<h4>db connect</h4>
+<pre>=# \c database_name</pre>
+<pre>
+# check version
+psql --version
+
+# connect to database
+psql -h localhost -U postgres
+
+# create database
+CREATE DATABASE db_name;
+
+# create user
+CREATE USER user_name WITH PASSWORD 'password';
+
+# grant all privileges on database to user
+GRANT ALL PRIVILEGES ON DATABASE db_name TO user_name;
+
+# psql -U mydbuser -h 127.0.0.1 -d postgres
+
+# list all databases
+\l
+
+# list all tables in current database
+\dt
+
+# list all columns in a table
+\d table_name
+
+# windows에서 psql 접속시
+SQL shell(psql) 실행
+</pre>
+<h2>rhel8에 설치하고 원격접근하기</h2>
+<p>RHEL에서 PostgreSQL에 원격 접속하려면, 서버 측 설정과 클라이언트 측 설정이 필요합니다. 
+서버 측에서는 postgresql.conf 파일에서 listen_addresses 설정이 `*`로 되어 있는지 확인하고, 
+pg_hba.conf 파일에서 클라이언트 접속을 허용하도록 설정해야 합니다. 
+클라이언트 측에서는 psql 또는 pgAdmin과 같은 클라이언트 도구를 사용하여 서버에 접속해야 합니다. </p>
+<code>서버 측 설정: /var/lib/pgsql/data</code>
+<pre>1. postgresql.conf 수정:
+  listen_addresses 설정을 `*`로 변경하여 모든 IP 주소에서 접속을 허용합니다.
+    예시: listen_addresses = '*' 
+2. pg_hba.conf 수정:
+  클라이언트의 IP 주소, 네트워크 또는 사용자별로 접속을 허용하도록 설정합니다.
+  예시: host all all 192.168.1.0/24 trust (192.168.1.0/24 네트워크의 모든 사용자를 인증 없이 허용) 
+3. PostgreSQL 서비스 재시작:
+    sudo systemctl restart postgresql 명령어를 사용하여 변경 사항을 적용합니다. 
+클라이언트 측 설정:
+1. psql 명령어 사용:
+  psql -h 192.168.1.10 -p 5432 -U postgres -d mydatabase 
+2. pgAdmin 사용:
+  pgAdmin에서 서버 연결 설정을 추가하고, 위에서 설정한 정보들을 입력하여 접속합니다. </pre>
+<h6>주의 사항:</h6>
+  pg_hba.conf 파일에서 인증 설정을 신중하게 설정해야 합니다. 필요에 따라 비밀번호 인증을 사용하거나 특정 IP 주소만 허용하도록 설정하는 것이 좋습니다. 
+방화벽 설정도 확인하여 PostgreSQL 포트(기본값 5432)가 열려있는지 확인해야 합니다. 
+</section>
+
+{% endblock %}

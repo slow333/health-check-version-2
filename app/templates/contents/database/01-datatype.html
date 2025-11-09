@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %} Postgres {% endblock %}
+
+{% block header %} datatype {% endblock %}
+
+{% block content %}
+<section>
+  <table>
+  <tr >
+  <td >Name</td>
+  <td >Aliases</td>
+  <td>Description</td>
+  </tr>
+  <tr >
+  <td>bigint</td>
+  <td >int8</td>
+  <td >signed eight-byte integer</td>
+  </tr>
+  <tr >
+  <td>bigserial</td>
+  <td >serial8</td>
+  <td >autoincrementing eight-byte integer</td>
+  </tr>
+  <tr >
+  <td>bit [ (n ) ]</td>
+  <td ></td>
+  <td >fixed-length bit string</td>
+  </tr>
+  <tr >
+  <td>bit varying [ (n) ]</td>
+  <td >varbit [ (n) ]</td>
+  <td >variable-length bit string</td>
+  </tr>
+  <tr >
+  <td>boolean</td>
+  <td >bool</td>
+  <td >logical Boolean (true/false)</td>
+  </tr>
+  <tr >
+  <td>box</td>
+  <td ></td>
+  <td >rectangular box on a plane</td>
+  </tr>
+  <tr >
+  <td>bytea</td>
+  <td ></td>
+  <td >binary data (byte array)</td>
+  </tr>
+  <tr >
+  <td>character [ (n) ]</td>
+  <td >char [ (n) ]</td>
+  <td >fixed-length character string</td>
+  </tr>
+  <tr >
+  <td>character varying [ (n) ]</td>
+  <td >varchar [ (n ) ]</td>
+  <td >variable-length character string</td>
+  </tr>
+  <tr >
+  <td>cidr</td>
+  <td ></td>
+  <td >IPv4 or IPv6 network address</td>
+  </tr>
+  <tr >
+  <td>circle</td>
+  <td ></td>
+  <td >circle on a plane</td>
+  </tr>
+  <tr >
+  <td>date</td>
+  <td ></td>
+  <td >calendar date (year, month, day)</td>
+  </tr>
+  <tr >
+  <td>double precision</td>
+  <td >float8</td>
+  <td >double precision floating-point number (8 bytes)</td>
+  </tr>
+  <tr >
+  <td>inet</td>
+  <td ></td>
+  <td >IPv4 or IPv6 host address</td>
+  </tr>
+  <tr >
+  <td>integer</td>
+  <td>int class="font013574">, int4</td>
+  <td >signed four-byte integer</td>
+  </tr>
+  <tr >
+  <td>interval [ fields ] [ (p ) ]</td>
+  <td ></td>
+  <td >time span</td>
+  </tr>
+  <tr >
+  <td>json</td>
+  <td ></td>
+  <td >textual JSON data</td>
+  </tr>
+  <tr >
+  <td>jsonb</td>
+  <td ></td>
+  <td >binary JSON data, decomposed</td>
+  </tr>
+  <tr >
+  <td>line</td>
+  <td ></td>
+  <td >infinite line on a plane</td>
+  </tr>
+  <tr >
+  <td>lseg</td>
+  <td ></td>
+  <td >line segment on a plane</td>
+  </tr>
+  <tr >
+  <td>macaddr</td>
+  <td ></td>
+  <td >MAC (Media Access Control) address</td>
+  </tr>
+  <tr >
+  <td>macaddr8</td>
+  <td ></td>
+  <td >MAC (Media Access Control) address (EUI-64 format)</td>
+  </tr>
+  <tr >
+  <td>money</td>
+  <td ></td>
+  <td >currency amount</td>
+  </tr>
+  <tr >
+  <td>numeric [ (p, s) ]</td>
+  <td >decimal [ (p , s ) ]</td>
+  <td >exact numeric of selectable precision</td>
+  </tr>
+  <tr >
+  <td>path</td>
+  <td ></td>
+  <td >geometric path on a plane</td>
+  </tr>
+  <tr >
+  <td>pg_lsn</td>
+  <td ></td>
+  <td>PostgreSQL Log Sequence Number</td>
+  </tr>
+  <tr >
+  <td>pg_snapshot</td>
+  <td ></td>
+  <td >user-level transaction ID snapshot</td>
+  </tr>
+  <tr >
+  <td>point</td>
+  <td ></td>
+  <td >geometric point on a plane</td>
+  </tr>
+  <tr >
+  <td>polygon</td>
+  <td ></td>
+  <td >closed geometric path on a plane</td>
+  </tr>
+  <tr >
+  <td>real</td>
+  <td>float4</td>
+  <td >single precision floating-point number (4 bytes)</td>
+  </tr>
+  <tr >
+  <td>smallint</td>
+  <td >int2</td>
+  <td >signed two-byte integer</td>
+  </tr>
+  <tr >
+  <td>smallserial</td>
+  <td>serial2</td>
+  <td>autoincrementing two-byte integer</td>
+  </tr>
+  <tr >
+  <td>serial</td>
+  <td >serial4</td>
+  <td >autoincrementing four-byte integer</td>
+  </tr>
+  <tr >
+  <td>text</td>
+  <td ></td>
+  <td >variable-length character string</td>
+  </tr>
+  <tr >
+  <td>time [ (p ) ] [ without time zone ]</td>
+  <td ></td>
+  <td >time of day (no time zone)</td>
+  </tr>
+  <tr >
+  <td>time [ (p ) ] with time zone</td>
+  <td>timetz</td>
+  <td >time of day, including time zone</td>
+  </tr>
+  <tr >
+  <td>timestamp [ (p ) ] [ without time zone ]</td>
+  <td ></td>
+  <td >date and time (no time zone)</td>
+  </tr>
+  <tr >
+  <td>timestamp [ (p ) ] with time zone</td>
+  <td >timestamptz</td>
+  <td >date and time, including time zone</td>
+  </tr>
+  <tr >
+  <td>tsquery</td>
+  <td></td>
+  <td>text search query</td>
+  </tr>
+  <tr >
+  <td>tsvector</td>
+  <td ></td>
+  <td >text search document</td>
+  </tr>
+  <tr>
+  <td>txid_snapshot</td>
+  <td></td>
+  <td>user-level transaction ID snapshot (deprecated; see pg_snapshot class="font013574">)</td>
+  </tr>
+  <tr >
+  <td>uuid</td>
+  <td ></td>
+  <td >universally unique identifier</td>
+  </tr>
+  <tr >
+  <td>xml</td>
+  <td ></td>
+  <td >XML data</td>
+  </tr>
+  </table>
+</section>
+{% endblock %}

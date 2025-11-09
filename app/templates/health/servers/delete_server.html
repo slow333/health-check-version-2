@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Server Health Check {% endblock %}
+{% block header %} Delete Server {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <form method="post" class="form-group d-flex flex-column gap-2 align-items-center" 
+    action="/health/servers/{{ server['id'] }}/delete" >
+    <p style="margin-top: 2rem;">
+      Are you sure you want to delete "{{ server['server_name'] }}"?</p>
+    <input class="btn btn-danger" type="submit" value="Delete" 
+      onclick="return confirm('Are you sure?');">
+    <a class="btn btn-secondary mt-3" href="/health/servers/">Cancel</a>
+  </form>
+</div>
+{% endblock %}

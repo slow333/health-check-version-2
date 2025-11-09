@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %} Python {% endblock %}
+{% block header %} try, except, finally {% endblock %}
+  
+{% block content %}
+<section>
+<pre>def say_nick(nick):
+    if nick == &#39;바보&#39;:
+        raise MyError()
+    print(nick)
+
+class MyError(Exception):
+  def __str__(self):
+    return &#39;허용되지 않는 별명입니다.&#39;
+
+try:
+    say_nick(&#39;천사&#39;)
+    say_nick(&#39;바보&#39;)
+except MyError as e:
+    print(e)</pre>
+<h4>else, finally</h4>
+<pre>file = None
+try:
+    file = open("my_file.txt", "r")
+    # ... do something with the file
+except FileNotFoundError:
+    print("File not found.")
+else:
+    print("File was successfully opened and processed.")
+finally:
+    if file:
+        file.close() # Always close the file</pre>
+<h5>모든 예외를 처리하려면 except: 처럼 애러 타입을 지정하지 않으면됨</h5>
+<h4>애러 종류</h4>
+<pre>try:
+    # Code that might raise any error
+    result = int("abc")
+except:
+    print("An unknown error occurred.")
+
+try:
+    age = int("old")
+except ValueError as e:
+    print(f"Failed to convert to an integer: {e}")
+
+try:
+    # Code that might raise different errors
+    my_list = [1, 2, 3]
+    print(my_list[5])
+except (IndexError, ValueError):
+    print("An index or value error occurred!")
+
+try:
+    # Code that might raise an error
+    value = 10 / 0 
+except ZeroDivisionError:
+    # Code to handle the specific error
+    print("Cannot divide by zero!")</pre>
+</section>
+
+{% endblock %}

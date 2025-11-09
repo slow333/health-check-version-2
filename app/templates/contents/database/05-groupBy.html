@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %} PostgreSQL {% endblock %}
+
+{% block header %} GROUP BY AND HAVING {% endblock %}
+
+{% block content %}
+<h4>group by는 aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) 과 합께 사용</h4>
+<pre>SELECT column_name(s) FROM table_name
+  WHERE condition
+  GROUP BY column_name(s) ORDER BY column_name(s); </pre>
+  
+<h3>GROUP BY</h3>
+<pre>SELECT COUNT(id), country FROM customer
+  GROUP BY country ORDER BY COUNT(id) DESC;</pre>
+<pre>SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders 
+  FROM Orders
+  LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+  GROUP BY ShipperName;</pre>
+<pre>-- 출고된 연도 별로 가격의 합
+  -- COUNT, MAX, MIN, AVG 등도 사용 가능
+SELECT SUM(price), model_year FROM car GROUP BY model_year; 
+SELECT SUM(price), customer_id FROM car GROUP BY customer_id; </pre>  
+
+<h3>HAVING</h3>
+<h4>group by 하면 where을 사용할 수 없어 HAVING 을 사용.</h4>
+<pre>SELECT column_name(s) FROM table_name
+  WHERE condition
+  GROUP BY column_name(s)
+  HAVING condition ORDER BY column_name(s);</pre>
+<pre>SELECT COUNT(id), Country FROM Customer
+  GROUP BY Country
+  HAVING COUNT(id) &gt; 15;</pre>
+<pre>SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM (Orders INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) &gt; 10;</pre>
+<pre>SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM Orders
+INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) &gt; 25;</pre>
+<pre>SELECT COUNT(*) , model FROM car
+  GROUP BY model 
+  HAVING COUNT(*) {`>`} 1 
+  ORDER BY COUNT(*) DESC;</pre>
+
+    <!-- ############## distinct #########################--> 
+<h3>SELECT DISTINCT; 중복제거</h3>
+  <pre>SELECT DISTINCT column1, column2 FROM table_name;
+SELECT Count(DISTINCT column1) FROM table_name;</pre>
+<pre>SELECT country, COUNT(DISTINCT city) FROM customers
+  GROUP BY country; -- 중복되지 않는 CITY의 개수를 샘</pre>
+
+<h3>중복된 모델을 가진 자동차를 삭제</h3>
+<pre>DELETE c1
+  FROM car c1
+  JOIN car c2
+  ON c1.model = c2.model
+  WHERE c1.id &lt; c2.id;
+  -- OR, WHERE c1.id &lt; (c2.id + 3); -- 3개만 남기기 </pre>
+<pre>-- 중복 제거 make, model, model_year 조합
+DELETE FROM car 
+WHERE id NOT IN (SELECT MIN(id) FROM car GROUP BY make, model, model_year);</pre>
+
+<h3>ROLLUP : GROUP BY 이후에 다시 전체 내용을 더하는 방식 </h3>
+<pre>SELECT make, SUM(price) AS total_price FROM car  
+GROUP BY make WITH ROLLUP;
+SELECT make, COUNT(id) AS total_price FROM car  
+GROUP BY make WITH ROLLUP;  </pre>
+{% endblock %}

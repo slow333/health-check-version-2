@@ -1,0 +1,22 @@
+<div class="items-container align-items-center">
+    <div>
+        <div class="d-flex gap-2 align-items-baseline">
+            <img src="{{ profile['profile_image'] }}" alt="profile image" height="32" width="32" class="rounded-circle me-2"> 
+            <h3> {{ profile['username'] }}</h3>
+            <small>{{ profile['email'] }}</small>
+        </div>
+        <div>Managed Servers:
+            {% for server in profile.allowed_servers %}
+                {{ server.server_name }}{% if not loop.last %} | {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        <a class="btn btn-outline-primary fs-sm" href="/auth/{{ profile['id'] }}/edit">
+        EDIT</a> 
+        <a class="btn btn-outline-primary fs-sm" href="/auth/{{ profile['id'] }}/manage_server">
+        서버 관리</a> 
+        <a class="btn btn-outline-primary fs-sm" href="/auth/{{ profile['id'] }}/delete">
+        DELETE</a> 
+    </div>
+</div>

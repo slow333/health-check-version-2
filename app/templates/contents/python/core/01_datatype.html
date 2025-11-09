@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block title %} Python {% endblock %}
+{% block header %} datatype {% endblock %}
+  
+{% block content %}
+<section>
+<h3>데이터 타입에는 int, float, str, dict, list, tuple, set, bool 등이 있다.</h3>
+<p>type() : 함수를 이용하여 데이터 타입을 확인할 수 있다.</p>
+<p>type(var)</p>
+<h3>dir(type) # 함수를 이용하여 데이터 타입에 사용할 수 있는 함수를 확인할 수 있다.</h3>
+<p>dir(type)</p>
+<h3>help(type) # 함수를 이용하여 데이터 타입에 사용할 수 있는 함수를 확인할 수 있다.</h3>
+<p>help(type)</p>
+
+<!-- int, float ============================ -->
+<h2>int, float</h2>
+<p>a = 3.42E3<br />
+print(type(a))<br />
+if (type(a) == float):<br />
+print(“a is a float”)<br />
+else:<br />
+print(“a is not a float”) # Simple calculator functions</p>
+<p>def add(x, y):<br />
+return x + y</p>
+<p>def divide(x, y):<br />
+if y != 0:<br />
+return x / y<br />
+else:<br />
+return “Division by zero error”</p>
+<p>print(add(5, 3)) # Output: 8<br />
+print(divide(5, 0)) # Output: Division by zero error</p>
+<h3>Python shell 실행 시</h3>
+<h5>_ 는 출력 값을 받아오기 위한 변수</h5>
+<p>tax = 12.5 / 100<br />
+price = 100.50<br />
+price * tax<br />
+price + _<br />
+round(_, 2)</p>
+<h3>text</h3>
+<h5>특수문자를 에스케이프 함.</h5>
+<pre>print(r'c:\new_folder') # raw string으로 특수문자 \를 그대로 표현
+3*'um' + 'bang' # 'umumumbang'  
+'PY' 'thon' # PYthon  
+text = ('Put several strings within parentheses '  
+    'to have them joined together.') # 여러줄 표시에 유용함</pre>
+
+<!-- string ========================== -->
+<h2>string[start: end:step]에서 end는 미포함</h2>
+<p>word = '123456789abcdefghijk'<br />
+word[0] 0번째 1<br />
+word[-1] k<br />
+word[0:2] 12<br />
+word[:2] 12<br />
+word[2:] '3456789abcdefghijk' , 2부터 끝까지<br />
+word[-2:] jk , -2부터 끝까지<br />
+word[0:14:3] '147ad' 0찍고 3칸씩 찍고 14까지.<br />
+word[::3] '147adgj' 처음부터 끝까지 3칸씩 찍음.</p>
+<h5>문자열 method</h5>
+<p>a = ' zYx 123abc 가나,다라다 345 라마 EFG '<br />
+a.find('3')<br />
+a.index('3')<br />
+a.count('3')<br />
+a.upper()<br />
+a.lower()<br />
+a.capitalize() // 첫글자만 대문자로<br />
+a.title() // 단어의 첫글자만 대문자로<br />
+a.swapcase() // 대소문자 바꾸기<br />
+a.replace('가나다','라마바')<br />
+a.split() // 문자열에서 공백으로 분리된 배열 반환<br />
+a.split(',') // 문자열에서 ,로 분리된 배열 반환<br />
+a.strip() // 양쪽 공백 제거<br />
+a.lstrip() // 왼쪽 공백 제거<br />
+a.rstrip() // 오른쪽 공백 제거<br />
+a.center(10) // 10개에서 가운데 위치<br />
+a.ljust(10) // 10개에서 왼쪽 위치<br />
+a.rjust(10) // 10개에서 오른쪽 위치<br />
+a.zfill(10) // 10개에서 0으로 채움<br />
+a.partition(',') // 콤마로 분리<br />
+a.rpartition(',') // 오른쪽에서 콤마로 분리<br />
+a.startswith('123') // 123으로 시작하는지 확인<br />
+a.endswith('abc') // abc로 끝나는지 확인</p>
+<p>b = a.split()<br />
+c = ' '.join(b) // 배열을 문자열로 합침<br />
+c =' '.join(a) // 문자열을 공백으로 합침</p>
+<h5>string은 변경불가함 'string'[0] = O , 애러남</h5>
+
+<!-- ================ list =================== -->
+<h2>List</h2>
+<p>list = [1,2,3]<br />
+리스트 합치기 : list + [1,2,3] === [1,2,3,1,2,3]<br />
+리스트에 추가 : list.append(7) #push와 같음<br />
+리스트 복사: list_copy = list[:] list_copy = list.copy()<br />
+리스트 초기화: list[:] = []<br />
+리스트를 갖는 리스트<br />
+a=['a','b','c'] b=[1,2,3]<br />
+c= [a, b] === [['a','b','c'], [1,2,3]] c[0][1] === 'b' ## 리스트 관련
+함수 a = [1, 2, 3]<br />
+b = [3, 4, 6]<br />
+a + b # [1,2,3,3,4,6]<br />
+a * 3 # [1,2,3,1,2,3,1,2,3] str(a[2]) + “hi” a.append(4) #[1,2,3,4]<br />
+a.append([5,6]) # [1,2,3,4,[5,6]]<br />
+a.extend([5,6]) # [1,2,3,4,5,6]<br />
+a.insert(0, 4) # [4,1,2,3,4] 0위치에 4를 삽입</p>
+<p>del a[1] # 1번째를 삭제 a.remove(3) # [1,2,4] # 처음 나오는 3을 삭제<br />
+a.pop() # [1,2] , 마지막 값을 리턴하고 요소에서 제거<br />
+a.pop(1) # [1] , 1번째 값을 리턴하고 요소에서 제거<br />
+## 리스트 연산(-(diffrence), & (intersection), |(union)) a = [1,2,3,4, 5]<br />
+b = [4,5,6]<br />
+a - b # [1,2,3] a.difference(b)<br />
+a & b # [4,5] a.intersection(b)<br />
+a | b # [1,2,3,4,5,6] a.union(b)<br />
+a + b # [1,2,4,5,3,4,5,6]</p>
+<h3>리스트 정렬</h3>
+<p>a.sort() # [1,2,3,4,5,6]<br />
+a.sort(reverse=True) # [6,5,4,3,2,1] a.reverse() # [6,5,4,3,2,1]</p>
+<h3>list enumerate</h3>
+<p>for i, name in enumerate(a):<br />
+print(i, name) # 0 a<br />
+</p>
+<h3>리스트 안에 리스트 출력(재귀호출)</h3>
+<pre>def print_elements(lst):  
+  for i in lst:  
+    if isinstance(i, list):  
+      print_elements(i)  
+    elif isinstance(i, str) and len(i) &gt; 1:  
+      for j in i:   
+        print(j)     
+    else:  
+      print(i)  
+  
+lst = [1, 2, 3,  ['a', 'b', 'xyz', ['d', 'e', ['f', 'g']]], 6, 7]  
+print_elements(lst)    </pre>
+ 
+<!-- tuple ============================== -->
+<h2>튜플</h2>
+<p>요소에 대한 변경이 불가</p>
+<pre>t1 = ()  
+t2 = (1,)  
+t3 = (1, 2, 3)  
+t4 = 1, 2, 3  
+t5 = ('a', 'b', ('ab', 'cd'))  
+del t4[0] # 에러  
+t4[0] = 'c' # 에러  
+t1 = (1, 2, 'a', 'b')  
+t1[1:] # (2, 'a', 'b')  
+t2 = (3, 4)  
+t1 + t2 # (1, 2, 'a', 'b', 3, 4)  
+t2 * 3 # (3, 4, 3, 4, 3, 4)  </pre>
+<h5>나머지 추출하는 방법은 list와 동일</h5>
+
+<!-- dict ============================== -->
+<h2>딕셔너리({key: value, …})</h2>
+<pre>key값은 중복 불가, 중복되면 마지막 값으로 덮어씀  
+dic = {'name':'pey', 'phone':'0119993323', 'isExist': True, 'birth':[1967, 2, 24]}  
+dic['name'] # pey  
+dic.get('name') # pey  
+dic['name'] = '홍길동' # 요소 변경  
+dic['address'] = '서울시 강남구' # 요소 추가  
+del dic['birth'] # 요소 삭제  
+  
+dic_keys = dic.keys() # dict_keys(['name', 'phone', 'birth'])  
+dic.values() # dict_values(['pey', '0119993323', '1118'])  
+dic.items() # dict_items([('name', 'pey'), ('phone', '0119993323'), ('birth', '1118')])  
+dic.clear() # {}  
+dict_keys 객체는 다음과 같이 사용할 수 있다. 리스트를 사용하는 것과 별 차이는 없지만, 리스트 고유의 append, insert, pop, remove, sort 함수는 수행할 수 없다.  
+get(x, '디폴트 값') # x키가 없으면 디폴트 값을 반환  </pre>
+<h5>딕셔너리 list 기능을 사용하기 위해서는 형변환 필요</h5>
+<p>dic_arr = list(dic_keys)</p>
+
+<h3>딕셔너리 정렬</h3>
+<p>리스트와 달리 딕셔너리(객체)는 .sort() 메소드를 직접
+가지고 있지 않습니다.<br />
+대신, 파이썬 내장 함수인 sorted()를 사용하여 딕셔너리의
+내용을 정렬할 수 있습니다.<br />
+sorted() 함수는 키, 값 또는 키-값 쌍(아이템)을 기준으로
+정렬된 <strong>새로운 리스트</strong>를 반환합니다.</p>
+<p>b = {'name': 'pey', 'phone': '0119993323', 'birth': '1118'}</p>
+
+<h5>키(key)를 기준으로 정렬하기</h5>
+<p>sorted() # 리턴값은 정렬된 리스트</p>
+<pre># b.items()를 키를 기준으로 정렬합니다.
+sorted_items_by_key = sorted(b.items())
+print(sorted_items_by_key)
+# 출력: [('birth', '1118'), ('name', 'pey'), ('phone', '0119993323')]</pre>
+<h5>값(value)을 기준으로 정렬하기</h5>
+<p>값으로 정렬하려면 sorted() 함수의 key
+인자를 사용해야 합니다. lambda 함수를 사용하면 간단하게
+정렬 기준을 지정할 수 있습니다. key=lambda item: item[1]은
+각 아이템(키-값 쌍 튜플)에서 인덱스 1에 해당하는 값(value)을 기준으로
+정렬하라는 의미입니다.</p>
+<pre># b.items()를 값을 기준으로 정렬합니다.
+sorted_items_by_value = sorted(b.items(), key=lambda item: item[1])
+print(sorted_items_by_value)
+# 출력: [('birth', '1118'), ('phone', '0119993323'), ('name', 'pey')]
+
+# 값을 기준으로 내림차순 정렬하려면 reverse=True를 추가합니다.
+sorted_items_by_value_desc = sorted(b.items(), key=lambda item: item[1], reverse=True)
+print(sorted_items_by_value_desc)
+# 출력: [('name', 'pey'), ('phone', '0119993323'), ('birth', '1118')]</pre>
+
+<!-- set ============================== -->
+<h2>set</h2>
+<p>중복을 허용하지 않는다. 순서가 없다(Unordered)<br />
+set('hello') # {'h', 'e', 'l', 'o'}<br />
+a = set('abcde')<br />
+b = set('cdefg')<br />
+a - b # {'a', 'b'} a.difference(b)<br />
+a + b # 에러<br />
+a * b # 에러<br />
+a | b # {'a', 'b', 'c', 'd', 'e', 'f', 'g'} a.union(b)<br />
+a &amp; b # {'c', 'd', 'e'} === a.intersection(b)<br />
+a ^ b # {'a', 'b', 'f', 'g'} a.symmetric_difference(b)</p>
+
+<!-- 문자열 포매팅 =================== -->
+<h2>문자열 포매팅</h2>
+<p>name = '홍길동'<br />
+age = 30<br />
+f'나의 이름은 {name}입니다. 나이는 {age +2}입니다.'<br />
+'나의 이름은 홍길동입니다. 나이는 30입니다.'<br />
+f'{“hey”:&gt;10}' a = “나는 %d개의 사과를 먹었다.” %3<br />
+y =3.141592<br />
+f”{y:0.4f}” y에서 소수점 4자리까지 표현</p>
+<p>num = 10<br />
+day = “three”<br />
+“I ate %d apples. so I was sick for %s days.” % (num, day)<br />
+## 문자열 포맷 코드 %s - 문자열<br />
+%c - 문자 1개<br />
+%d - 정수<br />
+%f - 부동소수<br />
+%o - 8진수<br />
+%x - 16진수<br />
+%% - Literal %(문자 %)<br />
+### %10s 길이가 10개인 문(앞에 채움)<br />
+### %-10s 길이가 10개인 문(뒤에 채움) ### $0.4f 소수점 4자리 정렬하기</p>
+<pre>"{0: < 10}".format("hi") 10칸에서 왼쪽정렬
+"{0: > 10}".format("hi") 10칸에서 오른쪽정렬
+"{0:^10}".format("hi") 10칸에서 가운데정렬
+"{0:=^10}".format("hi") 10칸에서 가운데정렬인데 '='로 채움
+"{0:!&gt;10}".format("hi") 10칸에서 왼쪽정렬인데 '!'로 채움</pre>
+<h3>excersie: fibonacci</h3>
+<pre>a, b = 0, 1  
+while a &lt; 10:  
+  print(a, end=',') # new line을 ,로 변경  
+  a, b = b, a+b</pre>
+<h3>set</h3>
+<pre>중복을 허용하지 않는다. 순서가 없다(Unordered).  
+set('hello') # {'h', 'e', 'l', 'o'}
+a = set('abcde')  
+b = set('cdefg')  
+a - b # {'a', 'b'} a.difference(b)  
+a + b # 에러  
+a * b # 에러  
+a | b # {'a', 'b', 'c', 'd', 'e', 'f', 'g'} a.union(b)  
+a & b # {'c', 'd', 'e'}  === a.intersection(b)  
+a ^ b # {'a', 'b', 'f', 'g'}  a.symmetric_difference(b)  
+
+a.add(4) # {1, 2, 3, 4}  
+a.update([5,6]) # {1, 2, 3, 4, 5, 6}  
+a.remove(1) # {2, 3, 4, 5, 6}  </pre>
+
+<!-- bool ========================== -->
+<h2>bool</h2>
+<pre>True, False  1, 0  
+a = True  
+b = False  
+type(a) # bool  
+1 == 1 # True  
+2 &gt; 1 # True  
+bool('python') # True  
+bool('') # False  
+bool([1,2,3]) # True  
+bool([]) # False  
+bool(0) # False  
+bool(3) # True  </pre>
+<h3>변수 선언 방법</h3>
+<pre>a, b = ('python', 'life')  
+(a, b) = 'python', 'life''  
+[a, b] = ['python', 'life']  
+a = b = 'python'  
+a = 3  
+b = 5  
+a, b = b, a  </pre>
+</section>
+
+<section>
+<!-- 형변환 ========================= -->
+<h2>형변환</h2>
+<p>int('123') # '123'을 정수로 변환<br />
+str(123) # 123을 문자열로 변환<br />
+float('123.45') # '123.45'을 실수로 변환<br />
+list('abc') # 'abc'를 리스트로 변환, ['a', 'b', 'c']<br />
+set([1, 2, 3]) # [1, 2, 3]을 집합으로 변환, {1, 2, 3}<br />
+dict([('a', 1), ('b', 2)]) # [('a', 1), ('b', 2)]을 딕셔너리로 변환,
+{'a': 1, 'b': 2}<br />
+dic = {'a': 1, 'b': 2}</p>
+<p>dic['c'] = 3 # 딕셔너리에 새로운 키-값 쌍 추가<br />
+list(dic.keys()) # 딕셔너리의 키를 리스트로 변환, ['a', 'b', 'c']<br />
+list(dic.values()) # 딕셔너리의 값을 리스트로 변환, [1, 2, 3]<br />
+list(dic.items()) # 딕셔너리의 (키, 값) 쌍을 리스트로 변환, [('a', 1),
+('b', 2), ('c', 3)]<br />
+tuple(dic.items()) # 딕셔너리의 (키, 값) 쌍을 튜플로 변환, (('a', 1),
+('b', 2), ('c', 3))<br />
+tuple = (('a', 1), ('b', 2), ('c', 3))<br />
+tuple[0] # ('a', 1)<br />
+tuple[0][0] # 'a'<br />
+list(tuple) # [('a', 1), ('b', 2), ('c', 3)]<br />
+set(tuple) # {('a', 1), ('b', 2), ('c', 3)}</p>
+</section>
+{% endblock %}

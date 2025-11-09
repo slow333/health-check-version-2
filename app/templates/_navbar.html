@@ -1,0 +1,24 @@
+<nav class="navbar" id="navbar">
+  <div>
+    <button class="navbar-btn" id="home"><a href="/home">Home</a></button>
+    <button class="navbar-btn" id="contents"><a href="/contents/">contents</a></button>
+    <button class="navbar-btn" id="health"><a href="/health/servers/">Servers</a></button>
+    <button class="navbar-btn" id="sar_traffic"><a href="/health/sar_traffic/generate">sar_traffic</a></button>
+
+    {% if current_user.is_authenticated %}
+    {% endif %}
+  </div>
+  <ul class="user-menu d-flex align-items-center justify-content-end gap-2">
+    <button id="theme-toggle" class="navbar-btn mt-0 pt-0 mb-1 pb-1">Toggle Theme</button>
+    {% if current_user.is_authenticated %}
+      <li><a href="/auth/{{ current_user.id }}">{{ current_user.username }}</a></li>
+      <li><a href="/auth/logout">Log Out</a></li>
+    {% else %}
+      <li><a href="/auth/register">Register </a></li>
+      <li><a href="/auth/login">LogIn</a></li>
+    {% endif %}
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <li><a href="/admin">ADMIN</a></li>
+    {% endif %}
+  </ul>
+</nav>

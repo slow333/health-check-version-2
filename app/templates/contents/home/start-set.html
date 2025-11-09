@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %} IDE {% endblock %}
+
+{% block header %} IDE setting {% endblock %}
+
+{% block content %}
+<section>
+  <h3>vs code 단축키</h3>
+  <ul>
+    <li>한줄 복사: alt+shift + arrow</li>
+    <li>한줄 이동: alt + arrow</li>
+    <li>줄삭제:Ctrl + Shift + K </li>
+    <li>단축키지정(user snippets): [File]-[Preference]-[Configure User Snippets]</li>
+    <pre>javascript.json에 내용 추가
+"console.log print":{
+  "prefix": "cl",
+  "body": [ "console.log()" ],
+  "description": "Log output to console"  }</pre>
+  </ul>
+  <h4>vs code setting</h4>
+  <pre>vs code setting
+
+settings => default formatter : Prettier - Code formatter
+     => format on save : check
+		 =>  auto save : onFocusChange
+		 => tab size : 2
+You can edit settings.json and add this line:
+톱니 => settings => 화면 우상귀의 Open settings(json) 클릭
+아래 내용 추가
+  "editor.mouseWheelZoom": true
+ 
+Ctrl + , Ctrl - ==> menu 크기 조정
+auto closing tags ==> html, java 자동으로 닫기
+=====================================
+plugins
+
+prettier
+image preview ==> 이미지 미리 보기
+Color Highlight
+auto rename tag ==> 하나 고치면 나머지도 고쳐임
+live server</pre>
+
+</section>
+<section>
+<h3>git; command shell</h3>
+  <pre>git init // 초기 시작시 에만 필요
+git add .
+git branch -M main // 초기 시작시 에만 필요
+git remote add origin git@github.com:slow333/js-spring-home.git // 초기 시작시 에만 필요
+git commit -m 'comments what i want'
+git push -u origin main
+
+git remote remove git@github.com:slow333/js-spring-home.git 
+
+애러 나면
+git push -u origin +main
+
+뭐 다른 애러 나면 ... 또 찾아서
+</pre>
+</section>
+{% endblock %}

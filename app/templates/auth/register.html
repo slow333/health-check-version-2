@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %} Register {% endblock %}
+{% block header %} Register {% endblock %}
+
+{% block content %}
+  <form method="post" class="form-group d-flex flex-column gap-2 mt-4 align-items-center" 
+    style="max-width: 600px; margin: auto;">
+    <label for="username">Username</label>
+    <input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+    
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
+    
+    <label for="password">Password</label>
+    <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+
+    <label for="ip_addr">Add Access Server</label>
+    <input type="text" class="form-control" name="ip_addr" id="ip_addr" placeholder="IP Address for access(','로 구분)">
+
+    <div class="mb-3 w-100">
+      <label for="profile_image" class="form-label">Profile Image</label>
+      <input class="form-control" type="file" name="profile_image" id="profile_image">
+    </div>
+    <div class="form-check w-100"><input type="checkbox" class="form-check-input" name="is_admin" id="is_admin"><label class="form-check-label ms-4" for="is_admin">Is Admin</label></div>
+    <input class="btn btn-primary w-100" type="submit" value="Register">
+    <a class="btn btn-secondary w-100" href="/apps/profiles/">cancel</a>
+  </form>
+{% endblock %}

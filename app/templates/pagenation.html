@@ -1,0 +1,29 @@
+{# pagenation:target_app, page, total_pages, per_page, page_length, start_page, end_page, request_args #}
+<div class="items pagenation">
+  {% set query_params = [] %}
+  {% if request_args %}
+    {% for key, value in request_args.items() %}
+      {% if key != 'page' and value %}
+      {# jinja2에서 ~는 문자열을 합치는 역활을 함, set _ 는 변수에 값을 할당하지만 _를 사용해서 앞으로 사용하지 않고 무시함을 의미함, 결국 key=value의 리스트를 생성함#}
+        {% set _ = query_params.append(key ~ '=' ~ value) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% set query_string = '&' ~ query_params|join('&') if query_params else '' %}
+  {# 위에서의 query_string을 페이지 내용에 넣음 #}
+  <a href="/{{target_app}}/?page={{ 1 if page > 1 else '' }}{{ query_string }}">
+    First</a>
+  <a href="/{{target_app}}/?page={{ page - 1 if page > 1 else '' }}{{ query_string }}">
+    Pre</a>
+  {% for i in range(start_page, end_page + 1) %}
+    {% if i == page %}
+      <strong style="color: red;">{{i}}</strong>
+    {% else %}
+      <a class="page-link" href="/{{target_app}}/?page={{i}}{{ query_string }}">{{i}}</a>
+    {% endif %}
+  {% endfor %}
+  <a href="/{{target_app}}/?page={{ page + 1 if page_length == per_page else '' }}{{ query_string }}">
+    Next</a>
+  <a href="/{{target_app}}/?page={{ total_pages if page < total_pages else '' }}{{ query_string }}">
+    Last</a>
+</div>

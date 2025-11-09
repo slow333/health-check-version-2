@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %} Python Advanced {% endblock %}
+{% block header %} class {% endblock %}
+  
+{% block content %}
+<section>
+<h4>class내부에서 함수를 생성시에 반드시 self(== this)를 인수로 받아야함</h4>
+<h4>생성자 함수</h4>
+<pre>def __init__(self, first, second)
+  self.first = first
+  self.second = second
+형태로 지정함</pre>
+<p>사용은 a = FourCal(4, 2) 처럼함</p>
+<pre>class FourCal:
+  def __init__(self, first, second):
+    self.first = first
+    self.second = second
+  def setdata(self, first, second):
+    self.first = first
+    self.second = second
+  def add(self):
+    result = self.first + self.second
+    return result
+  def mul(self):
+    result = self.first * self.second
+    return result
+  def sub(self):
+    result = self.first - self.second
+    return result
+  def div(self):
+    result = self.first / self.second
+    return result
+a = FourCal() # 생성자가 있으면 애러남
+b = FourCal() # 생성자가 있으면 애러남
+a.setdata(4, 2)
+a.add()
+b.setdata(3, 8)
+b.add()</pre>
+
+
+<h3>상속</h3>
+<h4>새로만든 class의 (parent class) 형태로 지정해서 사용할 수 있음</h4>
+<pre>class MoreFourCal(FourCal):
+  def pow(self):
+    result = self.first ** self.second
+    return result
+a = MoreFourCal(4, 2)
+a.pow()</pre>
+<h3>overriding</h3>
+<h4>부모 클래스에 있는 메서드를 동일한 이름으로 다시 만들어서 사용할 수 있음</h4>
+<pre>class SafeFourCal(FourCal):
+  def div(self):
+    if self.second == 0:
+      return 0
+    else:
+      return self.first / self.second
+  def sub(self):
+    if self.first &lt; self.second:
+      self.first, self.second = self.second, self.first
+    return self.first - self.second
+a = SafeFourCal(4, 0)
+a.sub()</pre>
+
+
+<h3>클래스 변수</h3>
+<h4>클래서 변수는 클래스로 만든 모든 객체에 공유된다.</h4>
+<h4>기본적으로 객체 생성없이 바로 사용 가능</h4>
+<pre>class Family:
+  lastname = &quot;김&quot;
+print(Family.lastname)
+a = Family()
+b = Family()
+print(a.lastname)
+print(Family.lastname)
+Family.lastname = &quot;박&quot;
+print(Family.lastname)
+print(b.lastname)</pre>
+</section>
+{% endblock %}

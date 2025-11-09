@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+
+{% block title %} Linux {% endblock %}
+
+{% block header %} Linux {% endblock %}
+
+{% block content %}
+<section>
+  <h3>환경 변수 설정</h3>
+  <pre>
+    $ env ==> 시스템에서 사용하는 변수를 보여줌
+    $ echo $PATH => env 중에서 PATH변수를 보여줌
+    ## PATH에 추가된 directory는 시스템에서 자동으로 불러와서 수행함
+    ## 별도의 경로를 지정해 줄필요가 없음
+    
+    ## 추가하기
+    # export PATH=/usr/local/somedirectory:$PATH ==> PATH에 추가함
+    
+    # echo '${ENV}' >> ./out.txt
+  </pre>
+</section>
+<section>
+  <h3>grep 명령어</h3>
+  <p>잠조사이트 :https://recipes4dev.tistory.com/157 </p>
+  <pre>
+grep [OPTION...] PATTERN [FILE...]
+  -E    : PATTERN을 확장 정규 표현식(Extended RegEx)으로 해석.
+  -F    : PATTERN을 정규 표현식(RegEx)이 아닌 일반 문자열로 해석.
+  -G    : PATTERN을 기본 정규 표현식(Basic RegEx)으로 해석.
+  -P    : PATTERN을 Perl 정규 표현식(Perl RegEx)으로 해석.
+  -e    : 매칭을 위한 PATTERN 전달.
+  -f    : 파일에 기록된 내용을 PATTERN으로 사용.
+  -i    : 대/소문자 무시.
+  -v    : 매칭되는 PATTERN이 존재하지 않는 라인 선택.
+  -w    : 단어(word) 단위로 매칭.
+  -x    : 라인(line) 단위로 매칭.
+  -z    : 라인을 newline(\n)이 아닌 NULL(\0)로 구분.
+  -m    : 최대 검색 결과 갯수 제한.
+  -b    : 패턴이 매치된 각 라인(-o 사용 시 문자열)의 바이트 옵셋 출력.
+  -n    : 검색 결과 출력 라인 앞에 라인 번호 출력.
+  -H    : 검색 결과 출력 라인 앞에 파일 이름 표시.
+  -h    : 검색 결과 출력 시, 파일 이름 무시.
+  -o    : 매치되는 문자열만 표시.
+  -q    : 검색 결과 출력하지 않음.
+  -a    : 바이너리 파일을 텍스트 파일처럼 처리.
+  -I    : 바이너리 파일은 검사하지 않음.
+  -d    : 디렉토리 처리 방식 지정. (read, recurse, skip)
+  -D    : 장치 파일 처리 방식 지정. (read, skip)
+  -r    : 하위 디렉토리 탐색.
+  -R    : 심볼릭 링크를 따라가며 모든 하위 디렉토리 탐색.
+  -L    : PATTERN이 존재하지 않는 파일 이름만 표시.
+  -l    : 패턴이 존재하는 파일 이름만 표시.
+  -c    : 파일 당 패턴이 일치하는 라인의 갯수 출력.
+</pre>
+<h4>3. grep 명령 사용 예제</h4>
+<pre>
+grep 사용 예				명령어 옵션
+대상 파일에서 문자열 검색	   grep "STR" [FILE]
+현재 디렉토리 모든 파일에서 문자열 검색	  grep "STR" *
+특정 확장자를 가진 모든 파일에서 문자열 검색   "STR" *.ext
+대소문자 구분하지 않고 문자열 검색된 라인 선택	grep -i "STR" [FILE]
+매칭되는 PATTERN이 존재하지 않는 라인 선택   grep -v "STR" [FILE]
+단어(Word) 단위로 문자열 검색	  grep -w "STR" [FILE]
+검색된 문자열이 포함된 라인 번호 출력   grep -n "STR" [FILE]
+하위 디렉토리를 포함한 모든 파일에서 문자열 검색	grep -r "STR" *
+최대 검색 결과 갯수 제한    grep -m 100 "STR" FILE
+검색 결과 앞에 파일 이름 표시   grep -H "STR" *
+문자열 A로 시작하여 문자열 B로 끝나는 패턴 찾기   grep "A.*B" *
+0-9 사이 숫자만 변경되는 패턴 찾기		grep "STR[0-9]" *
+문자열 패턴 전체를 정규 표현식 메타 문자가 아닌
+일반 문자로 검색하기		grep -F "*[]?..." [FILE]
+정규 표현식 메타 문자를 일반 문자로 검색하기		grep "\*" [FILE]
+문자열 라인 처음 시작 패턴 검색하기		grep "^STR" [FILE]
+문자열 라인 마지막 종료 패턴 검색하기		grep "$STR" [FILE]
+
+3.12 [0-9] 사이 숫자만 변경되는 패턴 찾기
+정규 표현식 "[]"를 사용하여 0-9 사이 숫자만 변경되는 문자열 패턴을 검색할 수 있습니다.
+
+grep step[0-9] *              > "step0", "step1", ..., "step9" 패턴을 검색.
+$ cat FILE3.txt
+step0  : edit text file.
+step1  : save the file.
+step2  : copy to usb.
+$ grep -n step[0-9] FILE3.txt
+1:step0  : edit text file.
+2:step1  : save the file.
+3:step2  : copy to usb.
+
+#!/bin/bash
+file_list=/var/log/sa/sa[0-9][0-9]
+
+#for current_number in {1..6}
+for sa in $file_list
+do
+echo $sa
+sleep 1
+done
+
+echo "Done for loop about for .. in .."
+  </pre>
+</section>
+<section>
+  <h3>rhel 7 install with register</h3>
+  <pre>
+rhel 7 there are no enabled repos
+sudo subscription-manager register
+id, password
+sudo subscription-manager refresh
+
+sudo yum update -y
+sudo yum groupinstall "Server with GUI"
+sudo systemctl set-default graphical.target
+reboot
+  </pre>
+</section>
+<section>
+  <h3>RHEL8 APACHE SERVER INSTALLATION</h3>
+  <p>출처: https://easyitwanner.tistory.com/120</p>
+  <pre>
+이전 1편에서 설명했던 것과 마찬가지로 Apache라고 하는 Apache HTTP Server는 
+웹 사이트 및 웹 응용 프로그램을 제공하는 데 널리 사용되는 오픈 소스 웹 서버 
+소프트웨어이며 견고성, 유연성 및 확장성으로 유명하다. Apache는 Linux뿐만 아니라 
+Windows, macOS를 비롯한 다양한 운영 체제에 설치할 수 있다. 
+이번 포스팅은 이 중 RedHat 기반으로 작성되었다.
+
+Apache 설치
+sudo dnf install httpd
+sudo yum install httpd
+
+Apache HTTP 서버 구성
+Apache의 기본 구성 파일은 일반적으로 Red Hat 기반 시스템의 /etc/httpd/conf/httpd.conf에 있다. 
+이 파일을 편집하여 기본 문서 루트 변경, 디렉토리 목록 활성화 또는 
+가상 호스트 구성과 같은 서버 설정을 사용자 정의할 수 있다.
+ 
+1. Apache HTTP Server 시작 및 활성화
+sudo systemctl start httpd (시작)
+sudo systemctl enable httpd (활성화)
+sudo systemctl enable --now httpd (한번에)
+
+2. 방화벽 구성(필요한 경우)
+RHEL 또는 Fedora의 firewalld와 같은 방화벽을 활성화한 경우 
+Apache 서버로 들어오는 연결을 허용하려면 필요한 포트
+(일반적으로 HTTP의 경우 포트 80, HTTPS의 경우 포트 443)를 열어야 할 수 있다.
+sudo firewall-cmd --permanent --add-service=http 
+sudo firewall-cmd --permanent --add-service=https 
+sudo firewall-cmd --reload
+
+3. Apache HTTP Server 설치 확인
+sudo systemctl status httpd
+서버가 실행 중이고 액세스 가능한지 확인하려면 웹 브라우저를 열고 서버의 
+IP 주소 또는 도메인 이름으로 이동한다. 기본 Apache 테스트 페이지가 표시되어야 한다.
+
+Apache를 사용하여 기본 웹 사이트 설정
+/var/www/html/ ==> 이 아래에 관련 파일을 넣으면 됨.
+아래는 넣어도 잘안됨 모르겠습니다.
+==============================================
+1. 웹사이트를 위한 새 디렉터리 생성먼저 웹사이트 파일을 보관할 새 디렉토리를 만든다.
+ 이 예에서는 /var/www 디렉토리에 example-site라는 디렉토리를 생성한다.
+sudo mkdir /var/www/example-site
+2. 적절한 권한 설정Apache 사용자가 디렉토리에 액세스할 수 있도록 하려면 새 디렉토리의 소유권과 권한을 업데이트한다.
+sudo chown apache:apache /var/www/example-site 
+sudo chmod 755 /var/www/example-site
+3. 샘플 HTML 파일을 만든다. 
+/var/www/example-site 디렉토리 안에 간단한 index.html 파일을 만든다.
+sudo nano /var/www/example-site/index.htmlsudo 
+vi /var/www/example-site/index.html
+4. 파일에 다음 콘텐츠를 추가한다.
+  HTML 파일 생성
+파일을 저장하고 닫는다.
+ 
+5. 가상 호스트 구성 파일을 만든다. Apache는 가상 호스트 파일을 사용하여 개별 웹 사이트에 대한 설정을 정의한다. 
+예제 사이트에 대한 새 가상 호스트 구성 파일을 만든다.
+sudo nano /etc/httpd/conf.d/example-site.conf
+sudo vi /etc/httpd/conf.d/example-site.conf
+</pre>
+<xmp>
+  6. 파일에 다음 콘텐츠를 추가한다.
+     (여기에 이 내용을 추가하면 ip로 접속이 안됨)
+     (<Directory> 를 추가하면 애러남)
+  <VirtualHost *:80>
+      ServerAdmin webmaster@http-css.com
+      DocumentRoot /var/www/http-css
+      ServerName http-css.com 
+      ServerAlias www.http-css.com
+      ErrorLog /var/log/httpd/http-css_error.log
+      CustomLog /var/log/httpd/http-css_access.log combined
+      <Directory /var/www/http-css> 
+        Options Indexes FollowSymLinks 
+        AllowOverride None 
+        Require all granted
+      </Directory>
+  </VirtualHost>
+</xmp>
+</section>
+
+<section>
+  <h3>NFS Server</h3>
+  <pre
+install  nfs-utils
+firewall open nfs 
+
+/etc/exports > /nas *(rw)     // /nas 폴터를 모든 사용자에 대해(*) 읽고 쓸수 있게(rw)
+
+# exportfs -r
+# exportfs -v
+
+client
+install  nfs-utils
+showmount -e ip-addr
+mount -t nfs -o sync ipaddr:/nas /nas   // 원격지nas의 /nas 폴더에 접근해서 option으로 sync하고 로컬 /nas에 마운트함
+/etc/fstab > ipaddr:/nas /nas nfs defaults 0 0
+  </pre>
+</section>
+
+<section>
+  <h3>SAR</h3>
+  <h4>SAR란 무엇입니까?</h4>
+  <ul>
+    <li>SAR은 시스템 활동을 수집하고 보고하는 데 사용되는 유틸리티입니다. 대부분의 핵심 시스템 기능과 관련된 데이터를 수집하고 해당 측정항목을 이진 데이터 파일에 기록합니다.</li>
+    <li>SAR은 sa## 파일(예: sa01)을 구체적으로 쿼리하거나 시스템에서 현재 실행 중인 통계를 요청하는 데 사용할 수 있는 바이너리(/usr/bin/sar)이기도 합니다.</li>
+  </ul>
+<p>SAR은 iostat와 같은 다른 통계 보고 도구도 제공하는 sysstat 패키지에 의해 제공된다. 
+기본적으로 sysstat 패키지는 설치되지 않음에 유의한다.</p>
+<ol>
+  <li>설치 방법 
+    <pre># yum install sysstat (repository가 연결되었을때)
+or
+# rpm -ivh sysstat (RPM 패키지 있을때)</pre>
+  </li>
+  <li>설정파일
+<pre>
+1)  /etc/sysconfig/sysstat
+------------------------------------------------------------------------
+# How long to keep log files (in days).
+# If value is greater than 28, then use sadc's option -D to prevent older
+# data files from being overwritten. See sadc(8) and sysstat(5) manual pages.
+HISTORY=28    
+//이 파라미터는 SAR에 성능 로그 파일이 보관되는 기간을 결정합니다. 기본값은 28일입니다
+
+# Compress (using xz, gzip or bzip2) sa and sar files older than (in days):
+COMPRESSAFTER=31   
+//이 파라미터는 SAR을 통해 압축할 파일의 경과 기간을 결정합니다. 기본값은 31입
+
+# Parameters for the system activity data collector (see sadc manual page)
+# which are used for the generation of log files.
+SADC_OPTIONS=" -S DISK"   // 
+
+# Directory where sa and sar files are saved. The directory must exist.
+SA_DIR=/var/log/sa    //SAR이 로그 파일을 저장하는 위치입니다.
+
+# Compression program to use.
+ZIP="xz"   // 압축된 로그 파일이 포함되는 기본 zip 파일입니다. 
+           // 31일을 초과하여 파일을 보관하는 경우 압축을 활성화해야 합니다. 
+		   압축 파일은 디스크에서 가능한 최소한의 공간을 차지합니다.
+------------------------------------------------------------------------
+
+2) /etc/systemd/system/sysstat.service.wants/sysstat-collect.timer(RHEL 8기준)
+# vim /etc/systemd/system/sysstat.service.wants/sysstat-collect.timer
+
+[Unit]
+Description=Run system activity accounting tool every 10 minutes
+[Timer]
+OnCalendar=*:00/10   
+// 10분마다 데이터를 수집한다. 5분으로 줄일수있다. 하지만 데이터가 많아진다~
+[Install]
+WantedBy=sysstat.service
+
+- 설정이 변경한 후에는 데몬을 재시작해줘야합니다. 
+# systemctl daemon-reload
+</pre>
+  </li>
+  <li>사용법
+    <p> SAR를 통해 현재 상태를 모니터링 할수도 있고, 과거 내역을 볼수도있다는 것이 장점입니다.</p>
+    <pre>
+1) 현재 상태 확인 
+  - 현재 CPU 상태를 1 초간격으로 10번 출력 
+# sar 1 10   
+  - 현재 CPU 상태를 1초간격으로 5번 출력하는데, CPU 9번째 코어를 보는 명령어입니다. 
+# sar 1 5 -P 9
+  - 현재 MEM를 1초간격으로 3번 출력 
+# sar -r 1 3
+  - 현재 io상태를 1초간격으로 3번 출력 
+# sar -b 1 3
+  - 현재 Disk상태를 1초 간격으로 2번 출력 
+# sar -d 1 2
+  - 현재 NIC 상태를 1초 간격으로 2번 출력 
+# sar -n DEV 1 2
+==> 이렇게 실시간으로 명령어 옵션들을 넣어 모든 상태를 볼수있습니다. 
+    하지만 저는 SAR의 최대장점은 과거 데이터를 보는데 있다고 생각합니다. 
+
+# ls
+sa01  sa04  sa05  sa07  sa10    sar13  sar14
+--------------
+sa# - 시스템 활동 바이너리 데이터 파일입니다.
+sar## - 시스템 활동 보고서 파일입니다.
+--------------
+
+1) sa#
+쉽게 말해 sa 는 바이너리 파일이라, SAR 명령어를 통해 볼수있습니다. 
+# sar -f /var/log/sa/sa11   // sa11파일 내용을 볼수있습니다. 
+# sar -f /var/log/sa/sa11 -r  // sa11파일내 메모리 파일만 봅니다. 
+
+2) sar##
+   - 일반 텍스트 파일처럼 vi or cat 으로 확인이 가능합니다. 
+
+# cat /var/log/sa/sa11
+
+그럼 왜 sa# sar# 파일이 나누는지 궁금할것입니다. 
+
+예를 들어 오늘이 17일인데 sa17 파일은 현재 시스템이 기록중입니다. 
+그래서 vi 나 cat으로 볼수없습니다. 
+하지만 00시 기준으로 이 파일을 sar17로 만들면서 일반 파일로 변경합니다. 
+
+그래서 당일 데이터이나 현재 시간 이전의 성능데이터를 보려면 sa 당일 파일을 봐야합니다. 
+그리고 보통 지난날의 성능데이터는 sar파일을 보는것이 편합니다.
+근데 여기서 너무 숫자로만 보는것이 불편하다고 하시는 분이 있습니다. 그래서 오픈소스에 
+SAR데이터를 GUI 로 변형해서 보여주는 Tool이 있습니다. 그 이름은 Ksar입니다. 
+다운로드 사이트 (https://sourceforge.net/projects/ksar/)
+    </pre>
+  </li>
+</ol>
+</section>
+ 
+{% endblock %}

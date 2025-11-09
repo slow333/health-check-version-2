@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %} Request Password {% endblock %}
+{% block header %} Request Password {% endblock %}
+
+{% block content %}
+  <form method="post" class="form-group d-flex flex-column gap-2 align-items-center" 
+    style="max-width: 600px; margin: auto;">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" required>
+    <input class="btn btn-primary w-100" type="submit" value="Request Password Reset">
+  </form>
+{% endblock %}

@@ -1,0 +1,10 @@
+<td>{{ hostinfo['hostname'] }}</td>
+<td>{{ hostinfo['ip_address'] }}</td>
+<td>{{ hostinfo['access_info']['id_ip'] }}</td>
+<td>{{ hostinfo.access_info.created.strftime('%Y-%m-%d %H:%M') if hostinfo.access_info.created else ''}}</td>
+<td>
+    {% for operator in hostinfo.access_info.operators %}
+        {{ operator.username }}
+    {% if not loop.last %}, {% endif %}
+    {% endfor %}
+</td>

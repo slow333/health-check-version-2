@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %} Server Health Check {% endblock %}
+{% block header %} Servers Information
+   {% if current_user.is_authenticated %}
+   <span class="d-flex justify-content-end" style="margin-top:-30px">
+     <a class="btn btn-outline-danger fs-sm" href="/health/resources">Server resources </a>
+   </span>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <hr class="border-3 border-primary">
+  <h3>총 {{ count_server }}개의 서버 정보</h3>
+  {% for result in health_results %}
+    <div class="d-flex justify-content-between align-items-start flex-column mb-3">
+      <small>{{ result[0] }} : {{ result[1] }}</small>
+      <small>{{ result[2] }} : {{ result[3] }}</small>
+      <small>{{ result[4] }} : {{ result[5] }}</small>
+      <small>{{ result[6] }} : {{ result[7] }}</small>
+    </div>
+    {% if not loop.last %} <hr> {% endif %}
+  {% endfor %}
+{# 
+pagenation: target_app, page, total_pages, per_page, page_length, start_page, end_page 
+   {% with 
+    target_app='servers', 
+    page=page, 
+    total_pages=total_pages, 
+    per_page=per_page, 
+    page_length=page_len, 
+    start_page=start_page, 
+    end_page=end_page %}
+      {% include 'auth/pagenation.html' with context %}
+  {% endwith %} 
+#}
+{% endblock %}

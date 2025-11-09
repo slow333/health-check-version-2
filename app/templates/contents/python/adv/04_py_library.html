@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %} Python Advanced {% endblock %}
+{% block header %} 표준 라이브러리 {% endblock %}
+  
+{% block content %}
+<section>
+<p>abs(-2) # 2<br />
+all([]) # true // all([1,2,0]) False<br />
+all([]) # true // all([1,2,0]) False<br />
+any # true // any([0,0,0]) False<br />
+bin # 0b1010<br />
+bool(0) # false<br />
+chr(97) # a<br />
+chr(‘a’) # 97<br />
+ord(‘a’) # 97<br />
+dir([1,2,3]) # list에서 지원하는 함수 목록<br />
+divmod(7, 2) # (3, 1) 목, 나머지<br />
+for index, value in enumerate([1,2,3]): # index, value를 …<br />
+eval(‘divmod(7,2)’) # 택스트 입력을 받아서 실행<br />
+filter(func, iterable) # iterable에서 func의 조건에 맞는 것만 반환<br />
+filter(lambda x: x &gt; 5, [3,4,5,6,7]) # iterable에서 func의 조건에
+맞는 것만 반환<br />
+hex(256) # ff<br />
+id(4) # 주소값을 보여줌<br />
+input(“값을 입력하세요”) # 값을 입력하세요<br />
+int(‘3’) # 3<br />
+isinstance(int, int)<br />
+len([1,2,3]) # 3<br />
+list(a) # a(리스트)를 복사<br />
+map(func, iterable) # map(함수, 리스트)<br />
+max([1,2,3]) # 3<br />
+min([1,2,3]) # 1<br />
+oct(8) # 0o10<br />
+pow(2,4) # 16<br />
+range(start, end, step) # range(1,10,2)<br />
+round(4.678, 2) # 4.68<br />
+sorted([3,1,2]) # [1,2,3]<br />
+sum([1,2,3]) # 6<br />
+tuple([1,2,3]) # (1,2,3)<br />
+type(int) # &lt;class ‘int’&gt;<br />
+zip([1,2,3], [4,5,6]) # [(1, 4), (2, 5), (3, 6)]</p>
+<h2>string 관련 함수</h2>
+<p>str(4) # ‘4’<br />
+string[2] # 3번째 문자<br />
+string[2:5] # 3번째부터 5번째까지<br />
+str.index(‘searchStr’) # 없으면 애러<br />
+str.find(‘searchStr’) # 없으면 -1<br />
+str.count(‘searchStr’) # 몇번 나오는지</p>
+<h1>기본 라이브러리</h1>
+<h3>import random as r</h3>
+<p>word = ‘123456789abcdefghijk’<br />
+r.choice(word)<br />
+r.random() # 0.12345678901234567<br />
+r.randint(1, 3) # 1부터 3 사이의 임의의 정수<br />
+r.randrange(1, 3) # 1부터 3 사이의 임의의 정수(3은 포함하지 않음)<br />
+mylist = [1, 2, 3, 4, 5]<br />
+r.sample(mylist, 2) # mylist에서 임의의 요소 2개를 뽑아 선택
+중복불가<br />
+r.choices(mylist, 2) # mylist에서 임의의 요소 2개를 뽑아 선택
+중복허용<br />
+### import math math.pi # 3.141592653589793<br />
+math.e # 2.718281828459045<br />
+math.ceil(1.1) # 2<br />
+math.floor(1.9) # 1<br />
+math.sqrt(16) # 4.0<br />
+math.pow(2, 3) # 8.0<br />
+### import sys sys.exit()<br />
+sys.path # 경로<br />
+sys.version # 파이썬 버전<br />
+sys.argv # 파이썬 파일 실행시 입력된 값<br />
+### import os os.getcwd() # 현재 디렉토리<br />
+os.listdir(os.getcwd()) # 현재 디렉토리의 파일 목록<br />
+os.mkdir(‘test’) # 디렉토리 생성<br />
+os.rmdir(‘test’) # 디렉토리 삭제<br />
+os.walk(os.getcwd()) # 디렉토리 트리 조회해서 path, dir, files를
+반환<br />
+–&gt; for path, dir, files in os.walk(os.getcwd()):<br />
+–&gt; print(path, dir, files) directory 면 자동으로 하위 파일을
+검색함<br />
+### import datetime datetime.date.today() # 현재 날짜<br />
+datetime.datetime.now() # 현재 날짜와 시간
+datetime.datetime.now().strftime(‘%Y-%m-%d %H:%M:%S’) # 현재 날짜와
+시간을 문자열로 반환<br />
+datetime.timedelta(days=1) # 1일<br />
+datetime.timedelta(days=3) # 3일<br />
+datetime.timedelta(days=1, hours=1) # 1일 1시간<br />
+### import time time.time() # 현재 시간</p>
+<h1>외부 라이브러리</h1>
+<h2>설치, 삭제</h2>
+<p>pip install package_name=1.0.4 / pip install package_name<br />
+pip uninstall package_name<br />
+pip install –upgrade package_name<br />
+pip list<br />
+## pip install Faker 가짜 데이터를 만드는 라이브러리<br />
+test_data = [(fake.name(), fake.address()) for i in range(30)]</p>
+<pre>fake.name() 이름
+fake.address()  주소
+fake.postcode() 우편 번호
+fake.country()  국가명
+fake.company()  회사명
+fake.job()  직업명
+fake.phone_number() 전화 번호  
+fake.email()    이메일 주소  
+fake.user_name()    사용자명  
+fake.pyint(min_value=0, max_value=100)  0부터 100 사이의 임의의 숫자  
+fake.ipv4_private() IP 주소
+fake.text() 임의의 문장 (한글 임의의 문장은 fake.catch_phrase() 사용)
+fake.color_name()   색상명</pre>
+<h3>pip install sympy</h3>
+<p>방정식 기호를 사용하게 해주는 라이브러리<br />
+from fractions import Fraction<br />
+from sympy import Symbol, solve</p>
+</section>
+{% endblock %}

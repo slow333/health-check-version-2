@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>REST API 요청</title>
+</head>
+<body>
+  <h1>REST API 요청</h1>
+  <section>
+    <h3>전체 조회</h3>
+    <button onclick="sendGetAllRequest()">전체 조회</button>
+    <div id="bookList"></div>
+    <script>
+      function sendGetAllRequest() {
+        const base_url = 'http://192.168.219.100:5000/books/';
+        fetch(base_url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          const bookList = document.getElementById('bookList');
+          bookList.innerHTML = '';
+          data.forEach(book => {
+            const bookItem = document.createElement('div');
+            bookItem.innerHTML = `<h3>Title: ${book.title} ( id: ${book.id})</h3> <p>Author: ${book.author} 
+              ( ${book.language}) : ${book.published_date}</p>`;
+            bookList.appendChild(bookItem);
+          });
+        })
+        .catch((error) => console.error('Error:', error));
+      }
+    </script>
+  </section>
+  <section>
+    <h3>GET 요청</h3>
+    <form id="getForm" onsubmit="event.preventDefault(); sendGetRequest();">
+      <input type="text" id="inputDataGet" name="inputDataGet" required>
+      <button type="submit">전송</button>
+    </form>
+    <div id="bookDetails"></div>
+    <script>
+      function sendGetRequest() {
+        const data = document.getElementById('inputDataGet').value;
+        const base_url = 'http://192.168.219.100:5000/books/';
+        fetch(base_url + data, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('bookDetails').innerHTML = `<p>${data.error}</p>`;
+            return;
+          }
+          const bookDetails = document.getElementById('bookDetails');
+          bookDetails.innerHTML = `<h3>Title: ${data.title} ( id: ${data.id})</h3> <p>Author: ${data.author} (${data.language})</p><p> Published Date: ${data.published_date}</p>`;
+        })
+        .catch((error) => console.error('Error:', error));
+      }
+    </script>
+  </section>
+  <section>
+    <h3>POST 요청</h3>
+    <div id="postResponse"></div>
+    <form id="postForm" onsubmit="event.preventDefault(); sendPostRequest();">
+      <input type="text" name="title" id="title" placeholder="title" required>
+      <input type="text" name="author" id="author" placeholder="author" required>
+      <input type="text" name="language" id="language" placeholder="language">
+      <input type="date" name="published_date" id="published_date" placeholder="published_date">
+      <button type="submit">전송</button>
+    </form>
+    <script>
+      function sendPostRequest() {
+        const base_url = 'http://192.168.219.100:5000/books/';
+        const data = {
+          'title': document.getElementById('title').value,
+          'author': document.getElementById('author').value,
+          'language': document.getElementById('language').value,
+          'published_date': document.getElementById('published_date').value
+        }
+        fetch(base_url, {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('postResponse').innerHTML = `
+          <h3>Title: ${data.title} ( id: ${data.id})</h3> 
+          <p>Author: ${data.author} (${data.language})</p><p> Published Date: ${data.published_date}</p>`;
+        })
+        .catch((error) => console.error('Error:', error));
+      }
+    </script>
+  </section>
+  <section>
+    <h3>PUT 요청</h3>
+    <div id="putResponse"></div>
+    <form id="putForm" onsubmit="event.preventDefault(); sendPutRequest();">
+      <input type="text" name="book_id" id="book_id" placeholder="book_id">
+      <input type="text" name="title" id="title1" placeholder="title">
+      <input type="text" name="author" id="author1" placeholder="author" required>
+      <input type="text" name="language" id="language1" placeholder="language">
+      <input type="date" name="published_date" id="published_date1" placeholder="published_date">
+      <button type="submit">전송</button>
+    </form>
+    <script>
+      function sendPutRequest() {
+        const data = {
+          title: document.getElementById('title1').value,
+          author: document.getElementById('author1').value,
+          language: document.getElementById('language1').value,
+          published_date: document.getElementById('published_date1').value
+        };
+        console.log(data)
+        const base_url = 'http://192.168.219.100:5000/books/';
+        const book_id = document.getElementById('book_id').value;
+        fetch(base_url + book_id, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('putResponse').innerHTML = `
+          <h3>메시지: ${data.message}</h3> `;
+        })
+        .catch((error) => console.error('Error:', error));
+      }
+    </script>
+  </section>
+  <section>
+    <h3>DELETE 요청</h3>
+    <div id="deleteResponse"></div>
+    <form id="deleteForm" onsubmit="event.preventDefault(); sendDeleteRequest();">
+      <input type="text" id="inputDataDelete" name="inputDataDelete" required>
+      <button type="submit">전송</button>
+    </form>
+  </section>
+  <script>
+    function sendDeleteRequest() {
+      const data = document.getElementById('inputDataDelete').value;
+      const base_url = 'http://192.168.219.100:5000/books/';
+
+      fetch(base_url + data, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message){
+          document.getElementById('deleteResponse').innerHTML = `<p>${data.message}</p>`;
+          return;
+        } else if (data.error) {
+          document.getElementById('deleteResponse').innerHTML = `<p>${data.error}</p>`;
+          return;
+        }
+      })
+      .catch((error) => console.error('Error:', error));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %} Flask {% endblock %}
+{% block header %} Installation Instructions {% endblock %}
+  
+{% block content %}
+<section>
+<h3>실행 순서 -> activate -> flask run</h3>
+<ol>
+  <li>Clone the repository: <code>git clone https://github.com/your/repo.git</code></li>
+  <li>Navigate to the project directory: <code>cd repo</code></li>
+  <li>Create a virtual environment: <code>python -m venv venv</code></li>
+  <li>Activate the virtual environment:
+    <ul>
+      <li>Windows: <code>venv\Scripts\activate</code></li>
+      <li>macOS/Linux: <code>source venv/bin/activate</code></li>
+    </ul>
+  </li>
+  <li>Install the required packages: <code>pip install -r requirements.txt</code></li>
+  <li>Run the application: <code>python app.py</code></li>
+</ol>
+<h2>다른 방법</h2>
+<p>다른 방법으로 설치하려면 다음 단계를 따르십시오:</p>
+<ol>
+  <li>python venvs를 다른 폴더에 구성: <code>mkdir venvs</code></li>
+  <li>프로젝트 환경 구성: <code>python -m venv venvs/myvenv</code></li>
+  <li>가상 환경 활성화: <code>source venvs/myvenv/bin/activate</code></li>
+  <li>필요한 패키지 설치: <code>pip install flask</code></li>
+  <li>애플리케이션 실행: <code>python app.py OR flask run</code></li>
+  <li>가상환경에서 나가기: <code>deactivate</code></li>
+  <li>가상환경을 윈도우 path에 지정 : win+r > <code>sysdm.cpl</code> > <code>환경 변수</code> > <code>Path 편집</code> > <code>venvs/myvenv</code> 추가</li>
+  <li>가상환경을 macOS/Linux path에 지정 : <code>~/.bash_profile</code> 또는 <code>~/.bashrc</code>에 <code>export PATH="$PATH:$(pwd)/venvs/myvenv/bin"</code> 추가</li>
+  <li>window는 cmd 파일 생성
+    <pre> // run_flask.cmd
+@echo off
+cd b:/python/flask_app
+set FLASK_APP=pybo
+set FLASK_DEBUG=true
+b:/python/venvs/flask_app/Scripts/activate  </pre>
+    <pre>// stop_flask.cmd
+@echo off
+cd b:/python/flask_app
+b:/python/venvs/flask_app/Scripts/deactivate.bat   </pre>
+  </li>
+</ol>
+<h1>프로젝트 디렉토리 생성</h1>
+<p>다음 단계를 따라 설치하십시오:</p>
+<ol>
+  <li>프로젝트 디렉토리 생성: <code>mkdir myproject</code></li>
+  <li>디렉토리로 이동: <code>cd myproject</code></li>
+  <li>flask 가상환경 실행: <code>run_flask.cmd </code></li>
+  <li>가상환경에서 나가기: <code>deactivate</code></li>
+  <li>flask 실행 : run flask(set FLASK_APP=pybo, set FLASK_DEBUG=true에서 이미 환경을 설정함) 
+    <br/>app.py를 pybo.py로 변경하려면 set FLASK_APP=pybo 필요
+  </li>
+  <li>pybo.py 파일을 pybo/__init__.py로 이동, 이렇게 하면 패키지로 인식됩니다.</li>
+  <li>__init__.py 파일을 생성하여 패키지로 인식되도록 합니다.
+    <pre>// 전체 구조를 create_app() 함수로 변경
+def create_app():
+  app = Flask(__name__)
+
+  @app.route("/")
+  def hello():
+      return "Hello World!"
+
+  @app.route("/install")
+  def install():
+      return render_template("install.html")
+
+  return app
+    </pre>
+  </li>
+
+</ol>
+<h1>블루프린트(route 관리)</h1>
+<p>블루프린트를 사용하여 라우트를 구성할 수 있습니다. 다음 단계를 따르십시오:</p>
+<ol>
+  <li>블루프린트 파일 생성: <code>mkdir pybo/main</code> 및 <code>pybo/main/routes.py</code></li>
+  <li>블루프린트 routes 생성: 
+    <pre>// routes.py
+from flask import Blueprint, render_template
+
+bp = Blueprint("main", __name__, url_prefix="/")
+
+@bp.route("/")
+def hello():
+    return "Hello World! from routes.py"
+
+@bp.route("/install")
+def install():
+    return render_template("install.html")
+    </pre>
+  </li>
+  <li>블루프린트 등록(__init__.py): 
+    <pre>
+from flask import Flask # type: ignore
+
+def create_app():
+  app = Flask(__name__)
+
+  from .main.routes import bp as main_bp
+  app.register_blueprint(main_bp)
+
+  return app
+
+if __name__ == "__main__":
+  app = create_app()
+  app.run(debug=True, host='0.0.0.0', port=5000)      </pre>
+  </li>
+</ol>
+</section>
+{% endblock %}
