@@ -2,23 +2,32 @@
 
 {% block title %}Images {% endblock %}
 
-{% block header %} Image Uploaded
-    <span class="d-flex justify-content-end" style="margin-top:-30px">
-        <a class="btn btn-outline-danger fs-sm" href="/images/upload">
-            Upload Image  </a>
-    </span>
-{% endblock %}
+{% block header %} 모든 사진 {% endblock %}
 
 {% block content %}
+<div class="d-flex justify-content-between my-3">
+  <form action="/images/" class="d-flex fs-sm" method="get">
+    <input type="text" name="title" class="w-auto">
+    <input type="submit" value="Search" class="btn btn-outline-primary fs-sm">
+    <a href="/images/" class="btn btn-outline-primary fs-sm">Reset</a>
+  </form>
+  <span>
+    <small class="text-muted me-2">{{ images|length }} images</small>
+    <a class="btn btn-outline-secondary fs-sm" href="/images/upload">Upload Image  </a>
+  </span>
+</div>
 <section class="mt-2">
   <div class="row">
     {% for image in images %}
     <div class="col-md-4">
       <div class="card mb-4">
         <div class="card-title text-center fs-lg">{{ image.title }}</div>
+        <a href="/images/{{ image.id }}/edit" class="btn btn-secondary fs-sm m-0 p-0 px-1">EDIT</a>
+        
         <img src="{{ url_for('images.get_image', id=image.id) }}" class="card-img-top" alt="{{ image.name }}">
         <div class="card-body" style="margin:0; padding:0;">
           <p class="card-text text-center fs-sm">{{ image.name }}</p>
+          <a href="/images/{{ image.id }}/delete" class="btn btn-warning fs-sm p-0 px-1 w-100">DELETE </a>
         </div>
       </div>
     </div>

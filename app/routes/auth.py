@@ -23,7 +23,7 @@ def index_auth():
 def user_profile(id):
     user = Users.query.get(id)
     if not user:
-        flash("해당 사용자가 없습니다.")
+        flash("해당 사용자가 없습니다.", category="danger")
         return redirect(url_for("auth.register_users")), 404
     if user.is_admin:
         users = Users.query.all()
@@ -68,10 +68,10 @@ def register_users():
                 profile_image_uri = save_resized_picture(file)
         
         if user:
-            flash(f'User {username} is already registered.')
+            flash(f'User {username} is already registered.', category='info')
             return render('auth/register.html')
         if confirm_password != password:
-            flash('암호가 일치하지 않습니다.')
+            flash('암호가 일치하지 않습니다.', category='danger')
             return render('auth/register.html')
         
         else:
@@ -82,7 +82,7 @@ def register_users():
             db.session.add(user)
             db.session.commit()
 
-            flash('사용자가 추가되었습니다.!')
+            flash('사용자가 추가되었습니다.!', category='success' )
             return redirect(url_for('auth.login_users'))
 
 @bp.route("/<int:id>/edit", methods=["GET", "POST"])
@@ -90,10 +90,10 @@ def register_users():
 def edit_user(id):
     user = db.session.get(Users, id)
     if not user:
-        flash("해당 사용자가 없습니다.")
+        flash("해당 사용자가 없습니다.", category="danger")
         return redirect(url_for("auth.register_users")), 404
     if not (current_user.is_admin or user.id == current_user.id):
-        flash("수정할 권한이 없습니다.")
+        flash("수정할 권한이 없습니다.", category="danger")
         return redirect(url_for("auth.register_users"))
     if request.method == "POST":
         username = request.form.get("username")
@@ -105,7 +105,7 @@ def edit_user(id):
         if edit_user.email == email:
             pass
         elif user_email:
-            flash(f"해당 '{email}'은 이미 등록되어 있습니다.")
+            flash(f"해당 '{email}'은 이미 등록되어 있습니다.", category="danger")
             return render("auth/user_edit.html", profile=user_email)
         edit_user.email = email
 
@@ -118,7 +118,7 @@ def edit_user(id):
                 user.profile_image = save_resized_picture(file)
 
         db.session.commit()
-        flash("사용자 정보가 수정되었습니다.")
+        flash("사용자 정보가 수정되었습니다.", category='success')
         return redirect(url_for("auth.user_profile", id=current_user.id))
     else:
         return render("auth/user_edit.html", profile=user)
@@ -165,7 +165,7 @@ def manage_server(id):
         user.allowed_servers = managed_servers
 
         db.session.commit()
-        flash(f"User '{user.username}' managed servers updated successfully.")
+        flash(f"User '{user.username}' managed servers updated successfully.", category='primary')
         return redirect(url_for("auth.user_profile", id=current_user.id))
     return render("auth/manage_server.html", user=user, servers=servers)
 

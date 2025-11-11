@@ -24,10 +24,15 @@ def index():
         hostinfo_server_by_user=hostinfo_server_by_user, 
         hostinfos=hostinfos)
 
-# severs -> hostinfos 자동 생성
-@bp.route("/generate")
+@bp.route("/generate_loading")
 @login_required
-def generate_host():
+def generate_host_loading():
+    return render("health/hostinfos/loading.html")
+
+# severs -> hostinfos 자동 생성
+@bp.route("/generate_run")
+@login_required
+def generate_host_run():
     hostinfos = get_hostinfos()
     for info in hostinfos:
         query_existing = db.session.query(HostInfos)\
@@ -35,8 +40,12 @@ def generate_host():
         if query_existing:
             continue
         new_host = HostInfos(
-            hostname=info.get("hostname"), 
-            ip_address=info.get("ip_address"))
+            hostname=info.get("hostname"),  ip_address=info.get("ip_address"),
+            os_info=info.get("os_info"), kernel_version=info.get("kernel_version"),
+            total_memory=info.get("total_memory"), cpu_info=info.get("cpu_info"),
+            cpu_cores=info.get("cpu_cores"), checked_date=info.get("checked_date")
+        )
+
         db.session.add(new_host)
         server = db.session.query(Servers).filter_by(ip_address=info.get("ip_address")).first()
         if server:

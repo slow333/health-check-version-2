@@ -3,8 +3,6 @@ from flask import (
   render_template as render, flash, url_for) # type: ignore
 from flask_login import current_user, login_required
 from ..extensions import db
-from ..models.users import Users
-from ..models.servers import Servers
 from ..models.hostinfos import HostInfos
 from ..models.sar_traffic import SarTraffic
 from .pagenation import pagenation
@@ -18,13 +16,21 @@ import os
 
 bp = Blueprint("sar_traffic", __name__, url_prefix="/health/sar_traffic")
 
-@bp.route("/generate")
+@bp.route("/generate_loading")
 @login_required
-def generate_traffic():
+def generate_loading():
+    return render("health/sar_traffic/loading.html")
+
+@bp.route("/generate_run")
+@login_required
+def generate_run():
     get_sar_traffic()
+    flash("트래픽 데이터를 성공적으로 가져왔습니다.", category="success")
+
     # down 받은 파일을 불러오기
     current_dir = os.path.dirname(os.path.abspath(__file__))
     down_dir = os.path.join(current_dir,'..', 'data')
+
     for file in os.listdir(down_dir):
         if file.endswith(".csv"):
             file_path = os.path.join(down_dir, file)
@@ -69,7 +75,7 @@ def generate_traffic():
                             txkB_per_second=float(txkB_per_second),
                             host_infos_id=hostinfo.id
                         )
-                        hostinfo.sar_traffic.append(new_traffic_data)
+                        # hostinfo.sar_traffic.append(new_traffic_data)
                         db.session.add(new_traffic_data)
                     except (ValueError, IndexError) as e:
                         print(f"Skipping line due to error: {e} -> {line.strip()}")
@@ -77,7 +83,9 @@ def generate_traffic():
             db.session.commit()
             os.remove(file_path)
 
-    return redirect(url_for("sar_traffic.index"))
+    # hostinfos에서 hostname을 리스트로 받기
+
+    return redirect(url_for("sar_traffic.index")) # This redirect will be sent to the AJAX call
 
 @bp.route("/")
 def index():
@@ -106,10 +114,14 @@ def index():
     # ========== end Search Logic ==========
     pagenation_data = pagenation(query=query, per_page=20, orders=SarTraffic.id.desc(), request_args=request.args)
 
+    hostinfos = db.session.query(HostInfos).all()
+    hostnames = [hostinfo.hostname for hostinfo in hostinfos]
+
     return render("health/sar_traffic/index.html",
                   traffic_data = pagenation_data['query_result'],
                   pagenation = pagenation_data,
-                  hostname=hostname,
+                  hostnames=hostnames,
+                  hostname_selected=hostname,
                   ip_address=ip_address,
                   start_date=start_date,
                   end_date=end_date
@@ -154,4 +166,10 @@ def graph():
     hostinfo = db.session.query(HostInfos).filter_by(hostname=hostname).first()
     plot_traffic_over_time(df, output_path, hostname=hostname, ip_address=hostinfo.ip_address)
 
-    return render("health/sar_traffic/graph.html", hostname=hostname, start_date=start_date, end_date=end_date, now=datetime.utcnow)
+    hostinfos = db.session.query(HostInfos).all()
+    hostnames = [hostinfo.hostname for hostinfo in hostinfos]
+
+    return render("health/sar_traffic/graph.html", 
+                  hostnames=hostnames,
+                  ip_address=ip_address,
+                  hostname_selected=hostname, start_date=start_date, end_date=end_date, now=datetime.utcnow)

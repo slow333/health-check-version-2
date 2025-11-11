@@ -4,6 +4,7 @@ def get_sar_traffic():
     import os
     from ...extensions import db
     from ...models.servers import Servers
+    from flask import flash
 
     # 현재 파일의 위치를 기준으로 셸 스크립트의 절대 경로를 생성합니다.
     current_dir = os.path.dirname(os.path.abspath(__file__))

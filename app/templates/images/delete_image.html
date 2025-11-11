@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Images {% endblock %}
+
+{% block header %} Image Edit {% endblock %}
+
+{% block content %}
+<section class="mt-2">
+  <div class="row">
+    <form action="/images/{{image.id}}/delete" method="POST">
+      <p style="margin-top: 2rem;">
+      Are you sure you want to delete "{{ image.title }}"?</p>
+      <input type="submit" value="DELETE" class="btn btn-danger my-3 w-auto" 
+        onclick="return confirm('Are you sure?');">
+      <a href="/images/" class="btn btn-info my-3">취소</a>
+    </form>
+    <img src="{{ url_for('images.get_image', id=image.id ) }}" alt="{{image.name}}">
+  </div>
+
+</section>
+{% endblock %}

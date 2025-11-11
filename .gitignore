@@ -1,7 +1,36 @@
-__pycache__/
-.env
-.venv/
-venv/
-*.log
-*.pyc
+# local data
+data/
 app/data/
+
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Flask-specific files
+instance/ # Flask's instance folder, often used for configuration and database files
+*.sqlite # SQLite database files
+*.db # Other database files
+
+# Configuration files (if not meant to be committed)
+config.pyc
+.flaskenv
+
+# Log files
+*.log
+
+# Test files
+.pytest_cache/

@@ -5,7 +5,7 @@
 {% block header %} Server Traffic (SAR)
     {% if current_user.is_authenticated %}
     <span class="d-flex justify-content-end" style="margin-top:-30px">
-        <a class="btn btn-outline-danger fs-sm" href="/health/sar_traffic/generate">
+        <a class="btn btn-outline-danger fs-sm" href="/health/sar_traffic/generate_loading">
             Generate Traffic Data</a>
     </span>
     {% endif %}
@@ -14,8 +14,16 @@
 <div class="container mt-3 d-flex flex-column gap-2 align-items-center">
     <form method="get" action="/health/sar_traffic/" accept-charset="utf-8" 
           class="d-flex justify-content-between align-items-center gap-1 fs-sm">
-      <input type="text" name="hostname" placeholder="hostname"
-         value="{{ hostname }}" class="form-control d-inline-block fs-sm" style="width: 110px;">
+      <select name="hostname" id="hostname" class="form-select d-inline-block fs-sm">
+        <option value="">HOSTNAEM</option>
+        {% for hostname in hostnames %}
+          {% if hostname == hostname_selected %}
+          <option value="{{ hostname }}" selected>{{ hostname }}</option>
+          {% else %}
+          <option value="{{ hostname }}">{{ hostname }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
       <input type="text" name="ip_address" placeholder="IP Address" 
         value="{{ ip_address }}" class="form-control d-inline-block fs-sm" style="width: 140px;">
       start:<input type="date" name="start_date" placeholder="Start date"
@@ -34,7 +42,6 @@
             <th>Date Time</th>
             <th>rx kbps</th>
             <th>tx kpbs</th>
-            <th>hostinfos</th>
         </tr>
         </thead>
         <tbody>
@@ -46,7 +53,6 @@
             <td>{{ data.date_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
             <td>{{ data.rxkB_per_second*8 }}</td>
             <td>{{ data.txkB_per_second*8 }}</td>
-            <td>{{ data.host_infos.ip_address }}</td>
         </tr>
         {% endfor %}
         </tbody>
@@ -64,5 +70,4 @@
         {% include 'pagenation.html' with context %}
     {% endwith %}
 </div>
-{# pagenation: target_app, page, total_pages, per_page, page_length, start_page, end_page #}
 {% endblock %}

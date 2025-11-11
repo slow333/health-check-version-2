@@ -1,6 +1,12 @@
 cmd_host = [
     {'name': "echo hostname;", 'cmd': 'hostname;' },
     {'name': "echo ip_address;", 'cmd': 'hostname -I;' },
+    {'name': "echo os_info;", 'cmd': "cat /etc/redhat-release;" },
+    {'name': "echo kernel_version;", 'cmd': "uname -a | awk '{print $3}';" },
+    {'name': "echo total_memory;", 'cmd': "free -m  | awk 'NR==2{print $2}';" },
+    {'name': "echo cpu_info;", 'cmd': 'lscpu | grep "Model name:" | head -n 1;' },
+    {'name': "echo cpu_cores;", 'cmd': 'grep -c processor /proc/cpuinfo;' },
+    {'name': "echo checked_date;", 'cmd': "date '+%Y-%m-%d %H:%M';"},
 ]
 
 def get_hostinfos():

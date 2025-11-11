@@ -9,11 +9,11 @@
   <h3>Upload New Image</h3>
   <form method="post" enctype="multipart/form-data">
     <div class="form-group">
-      <input type="text" name="title" placeholder="title">
       <label for="pic">Select image</label>
-      <input type="file" name="pic" class="form-control-file" id="pic" accept="image/png, image/jpeg, image/gif, image/webp">
+      <input type="file" name="pics" class="form-control-file" id="pic" accept="image/png, image/jpeg, image/gif, image/webp" multiple>
     </div>
     <button type="submit" class="btn btn-primary mt-3 ms-2">Upload</button>
+    <a href="/images/" class="btn btn-outline-primary fs-sm  mt-3 ms-2">Cancel</a>
   </form>
 </section>
 

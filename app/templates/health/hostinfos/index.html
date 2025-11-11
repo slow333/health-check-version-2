@@ -4,20 +4,25 @@
 {% block header %} Host Info List
     {% if current_user.is_authenticated %}
       <span class="d-flex justify-content-end" style="margin-top:-30px">
-        <a class="btn btn-outline-danger fs-sm" href="/health/hostinfos/generate">Generate Host Info</a>
+        <a class="btn btn-outline-danger fs-sm" href="/health/hostinfos/generate_loading">Generate Host Info</a>
       </span>
     {% endif %}
 {% endblock %}
 
 {% block content %}
   <div class="d-flex flex-column">
-    <table class="table table-striped mt-3 fs-sm">
+    <table class="table table-striped mt-3 fs-sm w-100">
       <thead class="thead-dark">
             <tr>
               <th>Hostname</th>
               <th>IP Address</th>
-              <th>Access Info</th>
-              <th>Created</th>
+              <th>os_info</th>
+              <th>kernel_ver</th>
+              <th>MEM</th>
+              <th>cpu_info</th>
+              <th>cpu_cores</th>
+              <th>checked_date</th>
+              <!-- <th>Access Info</th> -->
               <th>Operators</th>
             </tr>
         </thead>
